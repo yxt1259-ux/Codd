@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云南省实时天气地图系统</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="config.js"></script>
+    <script>
+        // 动态加载高德地图API
+        const script = document.createElement('script');
+        script.src = `https://webapi.amap.com/maps?v=2.0&key=${config.amapApiKey}`;
+        document.head.appendChild(script);
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", "Microsoft YaHei", sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header-left h1 {
+            color: #1e40af;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .header-right {
+            color: #6b7280;
+            font-size: 16px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr 350px;
+            gap: 20px;
+        }
+        
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .chart-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-card h3 {
+            color: #1e40af;
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .chart-container {
+            height: 200px;
+            position: relative;
+        }
+        
+        .map-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        #map {
+            height: 600px;
+            width: 100%;
+        }
+        
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            color: #1e40af;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .city-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .city-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e40af;
+            margin-bottom: 5px;
+        }
+        
+        .temp-range {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+        
+        .current-temp {
+            font-size: 48px;
+            font-weight: bold;
+            color: #1f2937;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .weather-icon {
+            font-size: 40px;
+        }
+        
+        .weather-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            background: #eff6ff;
+            border-radius: 10px;
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1e40af;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .popup-content {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .city-popup {
+            max-width: 200px;
+        }
+        
+        .suggestion-box {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .suggestion-box.show {
+            display: block;
+        }
+        
+        .filter-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-section {
+            margin-bottom: 15px;
+        }
+        
+        .filter-section h4 {
+            color: #1e40af;
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+        
+        .filter-option input[type="checkbox"] {
+            accent-color: #3b82f6;
+        }
+        
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+            }
+            
+            .left-panel {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .chart-card {
+                flex: 1;
+                min-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <span>🌤️</span>
+                <h1>云南省实时天气地图系统 V1.0</h1>
+            </div>
+            <div class="header-right">
+                2026年3月8日
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="chart-card">
+                    <h3>逐月气温趋势图</h3>
+                    <div class="chart-container">
+                        <canvas id="tempChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>湿度折线图</h3>
+                    <div class="chart-container">
+                        <canvas id="humidityChart"></canvas>
+                    </div>
+                </div>
+                <div class="filter-panel">
+                    <div class="filter-section">
+                        <h4>全部</h4>
+                        <div class="filter-option">
+                            <input type="checkbox" checked>
+                            <span>昆明</span>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" checked>
+                            <span>曲靖</span>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" checked>
+                            <span>丽江</span>
+                        </div>
+                    </div>
+                    <div class="filter-section">
+                        <h4>温度</h4>
+                        <div class="filter-option">
+                            <input type="checkbox" checked>
+                            <span>温度湿度</span>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" checked>
+                            <span>湿度温度</span>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" checked>
+                            <span>发布地图</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="map-container">
+                <div id="map"></div>
+                <div id="amap" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="card" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                        <div>
+                            <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">昆明 (Kunming)</div>
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 10px;">12℃ ~ 27℃</div>
+                            <div style="font-size: 48px; font-weight: bold; display: flex; align-items: center; gap: 15px;">
+                                <span>22℃</span>
+                                <span style="font-size: 40px;">☀️</span>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 10px; border-radius: 8px;">
+                            <div style="font-size: 12px; opacity: 0.9;">城市</div>
+                            <div style="font-size: 14px; font-weight: bold;">昆明市</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                        <div style="background: rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; align-items: center;">
+                            <div style="font-size: 12px; opacity: 0.9; margin-bottom: 5px;">湿度</div>
+                            <div style="font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+                                <span>💧</span>
+                                <span id="humidity">70%</span>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; align-items: center;">
+                            <div style="font-size: 12px; opacity: 0.9; margin-bottom: 5px;">风速</div>
+                            <div style="font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+                                <span>💨</span>
+                                <span id="windSpeed">4级</span>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; align-items: center;">
+                            <div style="font-size: 12px; opacity: 0.9; margin-bottom: 5px;">气压</div>
+                            <div style="font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+                                <span>🌡️</span>
+                                <span id="pressure">1004hPa</span>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; align-items: center;">
+                            <div style="font-size: 12px; opacity: 0.9; margin-bottom: 5px;">体感温</div>
+                            <div style="font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+                                <span>👤</span>
+                                <span id="feelsLike">17℃</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button class="btn" id="recommendBtn" style="background: rgba(255, 255, 255, 0.2); color: white; flex: 1;">
+                            🎲 随机推荐
+                        </button>
+                        <button class="btn" id="routeBtn" style="background: rgba(255, 255, 255, 0.2); color: white; flex: 1;">
+                            🗺️ 路线规划
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card suggestion-box" id="suggestBox">
+                    <h3 class="card-title">🎯 旅游推荐</h3>
+                    <div id="suggestContent"></div>
+                </div>
+                
+                <div class="card route-panel" id="routePanel">
+                    <h3 class="card-title">🗺️ 路线规划</h3>
+                    <div class="input-group">
+                        <label>起始地</label>
+                        <input type="text" id="origin" placeholder="请输入起始地">
+                    </div>
+                    <div class="input-group">
+                        <label>目的地</label>
+                        <input type="text" id="destination" placeholder="请输入目的地">
+                    </div>
+                    <button class="btn btn-primary" id="searchRoute" style="width: 100%;">
+                        查询路线
+                    </button>
+                    <div class="route-options" id="routeOptions"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化Leaflet地图（用于显示云南省地理边界和天气信息）
+        const leafletMap = L.map('map', {
+            center: [25.0, 102.7],
+            zoom: 7,
+            minZoom: 6,
+            maxZoom: 10,
+            zoomControl: true,
+            attributionControl: false
+        });
+        
+        // 添加高德地图图层（暗色风格）
+        L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}', {
+            subdomains: ['1', '2', '3', '4']
+        }).addTo(leafletMap);
+        
+        // 限制地图范围为云南省
+        const yunnanBounds = L.latLngBounds(
+            [21.0, 97.4], // 西南角
+            [29.3, 106.2]  // 东北角
+        );
+        leafletMap.setMaxBounds(yunnanBounds);
+        leafletMap.fitBounds(yunnanBounds);
+        
+        let weatherData = null;
+        let geoData = null;
+        let popups = [];
+        let currentRoute = null;
+        
+        // 初始化图表
+        function initCharts() {
+            // 逐月气温趋势图
+            const tempCtx = document.getElementById('tempChart').getContext('2d');
+            new Chart(tempCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                    datasets: [{
+                        label: '平均气温 (℃)',
+                        data: [10, 12, 16, 20, 23, 25, 26, 25, 22, 18, 14, 11],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 0,
+                            max: 30
+                        }
+                    }
+                }
+            });
+            
+            // 湿度折线图
+            const humidityCtx = document.getElementById('humidityChart').getContext('2d');
+            new Chart(humidityCtx, {
+                type: 'line',
+                data: {
+                    labels: ['12-24时', '0-6时', '6-12时', '12-18时', '18-24时'],
+                    datasets: [{
+                        label: '湿度 (%)',
+                        data: [60, 75, 65, 55, 70],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 页面加载完成后初始化图表
+        window.onload = function() {
+            initCharts();
+        };
+        
+        // 景点数据
+        const travelSpots = {
+            "昆明市": "滇池、云南民族村、石林",
+            "曲靖市": "罗平油菜花、九龙瀑布",
+            "玉溪市": "抚仙湖、哀牢山",
+            "保山市": "腾冲热海、和顺古镇",
+            "昭通市": "大山包、黄连河",
+            "丽江市": "丽江古城、玉龙雪山、泸沽湖",
+            "普洱市": "普洱茶园、太阳河森林公园",
+            "临沧市": "翁丁原始部落、沧源崖画",
+            "楚雄彝族自治州": "元谋土林、彝人古镇",
+            "红河哈尼族彝族自治州": "元阳梯田、建水古城",
+            "文山壮族苗族自治州": "普者黑、坝美",
+            "西双版纳傣族自治州": "野象谷、傣族园、望天树",
+            "大理白族自治州": "大理古城、洱海、苍山",
+            "德宏傣族景颇族自治州": "瑞丽口岸、芒市金塔",
+            "怒江傈僳族自治州": "丙察察、怒江大峡谷",
+            "迪庆藏族自治州": "香格里拉、普达措、梅里雪山"
+        };
+        
+        // 穿搭建议
+        function getClothes(temp) {
+            temp = parseInt(temp);
+            let clothesText, maleImages, femaleImages;
+            
+            if (temp < 10) {
+                clothesText = "🧥 厚外套+毛衣";
+                maleImages = [
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=handsome%20man%20wearing%20thick%20winter%20coat%20and%20sweater%2C%20stylish%2C%20fashionable%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=stylish%20man%20wearing%20wool%20coat%20and%20scarf%2C%20winter%20fashion%2C%20elegant%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20man%20wearing%20puffer%20jacket%20and%20knitwear%2C%20casual%20winter%20style%2C%20trendy%2C%20high%20quality&image_size=portrait_4_3"
+                ];
+                femaleImages = [
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=beautiful%20woman%20wearing%20thick%20winter%20coat%20and%20sweater%2C%20stylish%2C%20fashionable%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=elegant%20woman%20wearing%20wool%20coat%20and%20boots%2C%20winter%20fashion%2C%20chic%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=trendy%20woman%20wearing%20puffer%20jacket%20and%20knit%20hat%2C%20casual%20winter%20style%2C%20modern%2C%20high%20quality&image_size=portrait_4_3"
+                ];
+            } else if (temp < 20) {
+                clothesText = "🧥 薄外套+长袖";
+                maleImages = [
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=handsome%20man%20wearing%20light%20jacket%20and%20long%20sleeve%20shirt%2C%20stylish%2C%20fashionable%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=stylish%20man%20wearing%20denim%20jacket%20and%20flannel%20shirt%2C%20casual%20spring%20style%2C%20trendy%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20man%20wearing%20blazer%20and%20sweater%2C%20smart%20casual%20style%2C%20elegant%2C%20high%20quality&image_size=portrait_4_3"
+                ];
+                femaleImages = [
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=beautiful%20woman%20wearing%20light%20jacket%20and%20long%20sleeve%20shirt%2C%20stylish%2C%20fashionable%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=elegant%20woman%20wearing%20cardigan%20and%20blouse%2C%20spring%20fashion%2C%20chic%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=trendy%20woman%20wearing%20denim%20jacket%20and%20dress%2C%20casual%20spring%20style%2C%20modern%2C%20high%20quality&image_size=portrait_4_3"
+                ];
+            } else if (temp > 25) {
+                clothesText = "👕 短袖+短裤";
+                maleImages = [
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=handsome%20man%20wearing%20t-shirt%20and%20shorts%2C%20stylish%2C%20fashionable%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=stylish%20man%20wearing%20hawaiian%20shirt%20and%20shorts%2C%20summer%20fashion%2C%20trendy%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20man%20wearing%20polo%20shirt%20and%20chino%20shorts%2C%20smart%20casual%20summer%20style%2C%20elegant%2C%20high%20quality&image_size=portrait_4_3"
+                ];
+                femaleImages = [
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=beautiful%20woman%20wearing%20t-shirt%20and%20shorts%2C%20stylish%2C%20fashionable%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=elegant%20woman%20wearing%20summer%20dress%2C%20summer%20fashion%2C%20chic%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=trendy%20woman%20wearing%20crop%20top%20and%20high%20waist%20shorts%2C%20casual%20summer%20style%2C%20modern%2C%20high%20quality&image_size=portrait_4_3"
+                ];
+            } else {
+                clothesText = "👔 春秋常规装";
+                maleImages = [
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=handsome%20man%20wearing%20business%20casual%20clothes%2C%20stylish%2C%20fashionable%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=stylish%20man%20wearing%20blazer%20and%20chinos%2C%20smart%20casual%20style%2C%20elegant%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20man%20wearing%20sweater%20and%20trousers%2C%20casual%20spring%20style%2C%20trendy%2C%20high%20quality&image_size=portrait_4_3"
+                ];
+                femaleImages = [
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=beautiful%20woman%20wearing%20business%20casual%20clothes%2C%20stylish%2C%20fashionable%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=elegant%20woman%20wearing%20blouse%20and%20skirt%2C%20smart%20casual%20style%2C%20chic%2C%20high%20quality&image_size=portrait_4_3",
+                    "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=trendy%20woman%20wearing%20cardigan%20and%20trousers%2C%20casual%20spring%20style%2C%20modern%2C%20high%20quality&image_size=portrait_4_3"
+                ];
+            }
+            
+            // 随机选择一张图片，并添加随机参数确保每次生成不同的图片
+            const randomParam = Math.random().toString(36).substring(2, 10);
+            const maleImage = maleImages[Math.floor(Math.random() * maleImages.length)] + '&r=' + randomParam;
+            const femaleImage = femaleImages[Math.floor(Math.random() * femaleImages.length)] + '&r=' + randomParam;
+            
+            // 为所有图片添加随机参数
+            const randomizedMaleImages = maleImages.map(img => img + '&r=' + randomParam);
+            const randomizedFemaleImages = femaleImages.map(img => img + '&r=' + randomParam);
+            
+            return { text: clothesText, maleImage, femaleImage, maleImages: randomizedMaleImages, femaleImages: randomizedFemaleImages };
+        }
+        
+        // 清除所有弹窗
+        function clearAllPopups() {
+            popups.forEach(popup => {
+                leafletMap.removeLayer(popup);
+            });
+            popups = [];
+        }
+        
+        // 调用千问API生成穿搭建议
+        async function generateClothesRecommendation(city, weather) {
+            const apiKey = config.qwenApiKey;
+            const url = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
+            
+            const prompt = `请为${city}的天气(${weather.temp}°C ${weather.text})生成详细的穿搭建议。请包括：
+1. 适合的服装类型
+2. 颜色搭配建议
+3. 材质选择
+4. 配饰推荐
+5. 不同场合的穿搭建议
+请使用中文，内容要详细、实用、有吸引力。`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'ep-20260331110622-6z69c',
+                        messages: [{
+                            role: 'user',
+                            content: prompt
+                        }],
+                        temperature: 0.7
+                    })
+                });
+                
+                const data = await response.json();
+                return data.choices[0].message.content;
+            } catch (error) {
+                console.error('API调用失败:', error);
+                return '根据当前天气，建议选择合适的衣物，保持舒适。';
+            }
+        }
+
+        // 更新当前天气显示
+        async function updateCurrentWeather(city, weather) {
+            // 城市名称
+            document.querySelector('.card div:first-child div:first-child').textContent = `${city} (${city})`;
+            
+            // 温度范围（模拟数据）
+            const minTemp = parseInt(weather.temp) - 5;
+            const maxTemp = parseInt(weather.temp) + 5;
+            document.querySelector('.card div:first-child div:nth-child(2)').textContent = `${minTemp}℃ ~ ${maxTemp}℃`;
+            
+            // 当前温度
+            document.querySelector('.card div:first-child div:nth-child(3) span:first-child').textContent = `${weather.temp}℃`;
+            
+            // 天气图标
+            const weatherIcon = document.querySelector('.card div:first-child div:nth-child(3) span:nth-child(2)');
+            if (weather.text.includes('晴')) {
+                weatherIcon.textContent = '☀️';
+            } else if (weather.text.includes('云')) {
+                weatherIcon.textContent = '☁️';
+            } else if (weather.text.includes('雨')) {
+                weatherIcon.textContent = '🌧️';
+            } else if (weather.text.includes('雪')) {
+                weatherIcon.textContent = '❄️';
+            } else {
+                weatherIcon.textContent = '🌤️';
+            }
+            
+            // 天气详情
+            document.getElementById('humidity').textContent = `${weather.humidity}%`;
+            document.getElementById('windSpeed').textContent = weather.windScale || '3级';
+            document.getElementById('pressure').textContent = '1004hPa'; // 模拟数据
+            document.getElementById('feelsLike').textContent = `${parseInt(weather.temp) - 5}℃`; // 模拟数据
+            
+            // 显示穿搭建议
+            const clothes = getClothes(weather.temp);
+            const suggestBox = document.getElementById('suggestBox');
+            const suggestContent = document.getElementById('suggestContent');
+            
+            // 显示加载状态
+            suggestContent.innerHTML = `
+                <p><strong>📍 ${city} 天气状况</strong></p>
+                <p>温度：${weather.temp}°C ${weather.text}</p>
+                <div style="margin-top: 15px;">
+                    <h4 style="margin-bottom: 10px; color: #1e40af;">男性穿搭推荐</h4>
+                    <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px;">
+                        ${clothes.maleImages.map(img => `
+                            <div style="flex: 0 0 200px;">
+                                <img src="${img}" alt="男性穿搭" style="width: 100%; border-radius: 8px; height: 250px; object-fit: cover;">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <h4 style="margin-bottom: 10px; color: #1e40af;">女性穿搭推荐</h4>
+                    <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px;">
+                        ${clothes.femaleImages.map(img => `
+                            <div style="flex: 0 0 200px;">
+                                <img src="${img}" alt="女性穿搭" style="width: 100%; border-radius: 8px; height: 250px; object-fit: cover;">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div style="margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 8px; text-align: center;">
+                    <p>🤖 正在生成详细穿搭建议，请稍候...</p>
+                </div>
+            `;
+            suggestBox.classList.add('show');
+            
+            // 调用千问API生成穿搭建议
+            const clothesRecommendation = await generateClothesRecommendation(city, weather);
+            
+            // 更新推荐内容
+            suggestContent.innerHTML = `
+                <p><strong>📍 ${city} 天气状况</strong></p>
+                <p>温度：${weather.temp}°C ${weather.text}</p>
+                <div style="margin-top: 15px;">
+                    <h4 style="margin-bottom: 10px; color: #1e40af;">男性穿搭推荐</h4>
+                    <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px;">
+                        ${clothes.maleImages.map(img => `
+                            <div style="flex: 0 0 200px;">
+                                <img src="${img}" alt="男性穿搭" style="width: 100%; border-radius: 8px; height: 250px; object-fit: cover;">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <h4 style="margin-bottom: 10px; color: #1e40af;">女性穿搭推荐</h4>
+                    <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px;">
+                        ${clothes.femaleImages.map(img => `
+                            <div style="flex: 0 0 200px;">
+                                <img src="${img}" alt="女性穿搭" style="width: 100%; border-radius: 8px; height: 250px; object-fit: cover;">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div style="margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 8px;">
+                    <h4 style="margin-bottom: 10px; color: #1e40af;">AI穿搭建议</h4>
+                    ${clothesRecommendation}
+                </div>
+            `;
+        }
+        
+        // 打开城市弹窗
+        function openCityPopup(city, latlng) {
+            const w = weatherData[city];
+            if (!w) return;
+            
+            const clothes = getClothes(w.temp);
+            const spots = travelSpots[city] || "暂无推荐";
+            
+            const popup = L.popup({ autoClose: false, closeOnClick: false })
+                .setLatLng(latlng)
+                .setContent(`
+                    <div class="popup-content">
+                        <h4>${city}</h4>
+                        <div class="temp">${w.temp}°C</div>
+                        <div class="weather-desc">${w.text}</div>
+                        <div class="clothes">${clothes.text}</div>
+                        <div class="spots">🏞️ ${spots}</div>
+                    </div>
+                `)
+                .openOn(leafletMap);
+            popups.push(popup);
+        }
+        
+        // 调用千问API生成推荐内容
+        async function generateRecommendation(city1, weather1, city2, weather2) {
+            const apiKey = config.qwenApiKey;
+            const url = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
+            
+            const prompt = `请为从${city1}到${city2}的旅行生成详细的推荐内容。${city1}的天气是${weather1.temp}°C ${weather1.text}，${city2}的天气是${weather2.temp}°C ${weather2.text}。请包括：
+1. 行程建议
+2. 景点推荐
+3. 美食推荐
+4. 注意事项
+请使用中文，内容要详细、实用、有吸引力。`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'ep-20260331110622-6z69c',
+                        messages: [{
+                            role: 'user',
+                            content: prompt
+                        }],
+                        temperature: 0.7
+                    })
+                });
+                
+                const data = await response.json();
+                return data.choices[0].message.content;
+            } catch (error) {
+                console.error('API调用失败:', error);
+                return '💡 出行建议：两座城市均可正常游玩，建议根据温度准备相应衣物，享受云南美景！';
+            }
+        }
+
+        // 随机推荐按钮
+        document.getElementById('recommendBtn').onclick = async () => {
+            if (!weatherData) {
+                alert("数据加载中，请稍候！");
+                return;
+            }
+            
+            clearAllPopups();
+            
+            const cityList = Object.keys(weatherData);
+            let i = Math.floor(Math.random() * cityList.length);
+            let j;
+            do {
+                j = Math.floor(Math.random() * cityList.length);
+            } while (i === j);
+            
+            const c1 = cityList[i];
+            const c2 = cityList[j];
+            
+            // 即使geoData未加载，也能显示推荐信息
+            if (geoData) {
+                geoData.features.forEach(f => {
+                    const name = f.properties.name;
+                    if (name === c1 || name === c2) {
+                        const layer = L.geoJSON(f);
+                        const center = layer.getBounds().getCenter();
+                        openCityPopup(name, center);
+                    }
+                });
+            }
+            
+            const w1 = weatherData[c1];
+            const w2 = weatherData[c2];
+            const suggestBox = document.getElementById('suggestBox');
+            const suggestContent = document.getElementById('suggestContent');
+            
+            const clothes1 = getClothes(w1.temp);
+            const clothes2 = getClothes(w2.temp);
+            
+            // 显示加载状态
+            suggestContent.innerHTML = `
+                <p><strong>推荐路线：${c1} → ${c2}</strong></p>
+                <p>📍 ${c1}：${w1.temp}°C ${w1.text}｜${clothes1.text}</p>
+                <p>📍 ${c2}：${w2.temp}°C ${w2.text}｜${clothes2.text}</p>
+                <div style="margin-top: 15px;">
+                    <h4 style="margin-bottom: 10px; color: #1e40af;">男性穿搭推荐</h4>
+                    <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px;">
+                        ${clothes1.maleImages.map(img => `
+                            <div style="flex: 0 0 200px;">
+                                <img src="${img}" alt="男性穿搭" style="width: 100%; border-radius: 8px; height: 250px; object-fit: cover;">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <h4 style="margin-bottom: 10px; color: #1e40af;">女性穿搭推荐</h4>
+                    <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px;">
+                        ${clothes1.femaleImages.map(img => `
+                            <div style="flex: 0 0 200px;">
+                                <img src="${img}" alt="女性穿搭" style="width: 100%; border-radius: 8px; height: 250px; object-fit: cover;">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div style="margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 8px; text-align: center;">
+                    <p>🤖 正在生成详细推荐内容，请稍候...</p>
+                </div>
+            `;
+            suggestBox.classList.add('show');
+            
+            // 调用千问API生成推荐内容
+            const recommendation = await generateRecommendation(c1, w1, c2, w2);
+            
+            // 更新推荐内容
+            suggestContent.innerHTML = `
+                <p><strong>推荐路线：${c1} → ${c2}</strong></p>
+                <p>📍 ${c1}：${w1.temp}°C ${w1.text}｜${clothes1.text}</p>
+                <p>📍 ${c2}：${w2.temp}°C ${w2.text}｜${clothes2.text}</p>
+                <div style="margin-top: 15px;">
+                    <h4 style="margin-bottom: 10px; color: #1e40af;">男性穿搭推荐</h4>
+                    <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px;">
+                        ${clothes1.maleImages.map(img => `
+                            <div style="flex: 0 0 200px;">
+                                <img src="${img}" alt="男性穿搭" style="width: 100%; border-radius: 8px; height: 250px; object-fit: cover;">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <h4 style="margin-bottom: 10px; color: #1e40af;">女性穿搭推荐</h4>
+                    <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px;">
+                        ${clothes1.femaleImages.map(img => `
+                            <div style="flex: 0 0 200px;">
+                                <img src="${img}" alt="女性穿搭" style="width: 100%; border-radius: 8px; height: 250px; object-fit: cover;">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div style="margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 8px;">
+                    ${recommendation}
+                </div>
+            `;
+        };
+        
+        // 路线规划按钮
+        document.getElementById('routeBtn').onclick = () => {
+            const routePanel = document.getElementById('routePanel');
+            routePanel.classList.toggle('show');
+            
+            // 切换高德地图的显示状态
+            const amapContainer = document.getElementById('amap');
+            if (routePanel.classList.contains('show')) {
+                amapContainer.style.display = 'block';
+                // 确保高德地图已初始化
+                if (!amap) {
+                    initAMap();
+                }
+            } else {
+                amapContainer.style.display = 'none';
+            }
+        };
+        
+        // 生成未来几天的模拟天气数据
+        function generateWeatherForecast(city, days = 7) {
+            const forecast = [];
+            const baseTemp = parseInt(weatherData[city].temp);
+            const weatherTypes = ['晴', '多云', '阴', '小雨', '中雨'];
+            
+            for (let i = 0; i < days; i++) {
+                const temp = baseTemp + Math.floor(Math.random() * 6) - 3;
+                const weather = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
+                const humidity = 40 + Math.floor(Math.random() * 30);
+                
+                forecast.push({
+                    day: i === 0 ? '今天' : `${i+1}天后`,
+                    temp: temp.toString(),
+                    text: weather,
+                    humidity: humidity.toString()
+                });
+            }
+            
+            return forecast;
+        }
+        
+        // 初始化高德地图（用于路径导航）
+        let amap;
+        function initAMap() {
+            if (typeof AMap !== 'undefined') {
+                amap = new AMap.Map('amap', {
+                    center: [102.7, 25.0],
+                    zoom: 7
+                });
+            }
+        }
+        
+        // 页面加载完成后初始化高德地图
+        window.onload = function() {
+            initCharts();
+            initAMap();
+        };
+
+        // 查询路线
+        document.getElementById('searchRoute').onclick = () => {
+            const origin = document.getElementById('origin').value;
+            const destination = document.getElementById('destination').value;
+            
+            if (!origin || !destination) {
+                alert("请输入起始地和目的地！");
+                return;
+            }
+            
+            const routeOptions = document.getElementById('routeOptions');
+            routeOptions.innerHTML = `<p style="text-align: center; padding: 20px;">🤖 正在规划路线，请稍候...</p>`;
+            
+            // 确保高德地图已初始化
+            if (!amap) {
+                initAMap();
+            }
+            
+            // 使用高德地图API进行路径规划
+            AMap.plugin(['AMap.Driving', 'AMap.Geocoder'], function() {
+                const geocoder = new AMap.Geocoder();
+                
+                // 解析起点地址
+                geocoder.getLocation(origin, function(status, result) {
+                    if (status === 'complete' && result.geocodes.length > 0) {
+                        const originLocation = result.geocodes[0].location;
+                        
+                        // 解析终点地址
+                        geocoder.getLocation(destination, function(status, result) {
+                            if (status === 'complete' && result.geocodes.length > 0) {
+                                const destLocation = result.geocodes[0].location;
+                                
+                                // 进行驾车路线规划
+                                const driving = new AMap.Driving({
+                                    map: amap,
+                                    panel: 'routeOptions'
+                                });
+                                
+                                driving.search([originLocation.lng, originLocation.lat], [destLocation.lng, destLocation.lat], function(status, result) {
+                                    if (status === 'complete') {
+                                        console.log('路径规划成功:', result);
+                                        
+                                        // 生成天气数据
+                                        const originForecast = generateWeatherForecast('昆明市');
+                                        const destForecast = generateWeatherForecast('丽江市');
+                                        
+                                        // 添加天气信息
+                                        const weatherInfo = `
+                                            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                                                <h5 style="color: #374151; margin-bottom: 15px;">天气信息</h5>
+                                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                                    <div>
+                                                        <h6 style="color: #6b7280; margin-bottom: 10px;">${origin} 7日天气</h6>
+                                                        <div style="display: flex; overflow-x: auto; gap: 10px;">
+                                                            ${originForecast.map(day => `
+                                                                <div style="min-width: 80px; padding: 10px; background: #eff6ff; border-radius: 8px; text-align: center;">
+                                                                    <div style="font-size: 12px; color: #6b7280;">${day.day}</div>
+                                                                    <div style="font-size: 16px; font-weight: bold; color: #1e40af; margin: 5px 0;">${day.temp}°C</div>
+                                                                    <div style="font-size: 12px; color: #6b7280;">${day.text}</div>
+                                                                </div>
+                                                            `).join('')}
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h6 style="color: #6b7280; margin-bottom: 10px;">${destination} 7日天气</h6>
+                                                        <div style="display: flex; overflow-x: auto; gap: 10px;">
+                                                            ${destForecast.map(day => `
+                                                                <div style="min-width: 80px; padding: 10px; background: #eff6ff; border-radius: 8px; text-align: center;">
+                                                                    <div style="font-size: 12px; color: #6b7280;">${day.day}</div>
+                                                                    <div style="font-size: 16px; font-weight: bold; color: #1e40af; margin: 5px 0;">${day.temp}°C</div>
+                                                                    <div style="font-size: 12px; color: #6b7280;">${day.text}</div>
+                                                                </div>
+                                                            `).join('')}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                        
+                                        // 更新路线面板
+                                        setTimeout(() => {
+                                            routeOptions.innerHTML += weatherInfo;
+                                        }, 500);
+                                    } else {
+                                        routeOptions.innerHTML = `<p style="text-align: center; padding: 20px; color: #ef4444;">路径规划失败，请检查输入的地址是否正确</p>`;
+                                        console.error('路径规划失败:', result);
+                                    }
+                                });
+                            } else {
+                                routeOptions.innerHTML = `<p style="text-align: center; padding: 20px; color: #ef4444;">终点地址解析失败，请检查输入的地址是否正确</p>`;
+                            }
+                        });
+                    } else {
+                        routeOptions.innerHTML = `<p style="text-align: center; padding: 20px; color: #ef4444;">起点地址解析失败，请检查输入的地址是否正确</p>`;
+                    }
+                });
+            });
+        };
+        
+        // 点击地图
+        leafletMap.on('click', () => {
+            document.getElementById('suggestBox').classList.remove('show');
+        });
+        
+        // 加载天气数据
+        fetch('yunnan_weather.json')
+            .then(res => res.json())
+            .then(data => {
+                weatherData = data;
+                loadGeo();
+            })
+            .catch(err => {
+                console.error("天气数据加载失败:", err);
+                // 使用模拟数据
+                weatherData = {
+                    "昆明市": {"temp": "22", "text": "晴", "humidity": "45"},
+                    "曲靖市": {"temp": "20", "text": "多云", "humidity": "50"},
+                    "玉溪市": {"temp": "23", "text": "晴", "humidity": "48"},
+                    "保山市": {"temp": "21", "text": "小雨", "humidity": "65"},
+                    "昭通市": {"temp": "18", "text": "阴", "humidity": "55"},
+                    "丽江市": {"temp": "19", "text": "晴", "humidity": "40"},
+                    "普洱市": {"temp": "24", "text": "多云", "humidity": "60"},
+                    "临沧市": {"temp": "25", "text": "晴", "humidity": "55"},
+                    "楚雄彝族自治州": {"temp": "21", "text": "晴", "humidity": "45"},
+                    "红河哈尼族彝族自治州": {"temp": "26", "text": "多云", "humidity": "58"},
+                    "文山壮族苗族自治州": {"temp": "24", "text": "小雨", "humidity": "62"},
+                    "西双版纳傣族自治州": {"temp": "28", "text": "晴", "humidity": "70"},
+                    "大理白族自治州": {"temp": "20", "text": "多云", "humidity": "48"},
+                    "德宏傣族景颇族自治州": {"temp": "27", "text": "晴", "humidity": "65"},
+                    "怒江傈僳族自治州": {"temp": "22", "text": "多云", "humidity": "52"},
+                    "迪庆藏族自治州": {"temp": "15", "text": "晴", "humidity": "35"}
+                };
+                loadGeo();
+            });
+        
+        // 根据温度获取颜色
+        function getColorByTemperature(temp) {
+            temp = parseInt(temp);
+            if (temp < 15) return '#93c5fd';  // 蓝色 - 较冷
+            if (temp < 20) return '#60a5fa';  // 浅蓝色
+            if (temp < 25) return '#fcd34d';  // 黄色 - 温暖
+            if (temp < 28) return '#f97316';  // 橙色 - 较热
+            return '#ef4444';  // 红色 - 炎热
+        }
+        
+        // 加载GeoJSON
+        function loadGeo() {
+            console.log("开始加载GeoJSON数据");
+            // 添加随机参数避免浏览器缓存
+            const randomParam = '?t=' + new Date().getTime();
+            fetch('yunnan_geo.json' + randomParam)
+                .then(res => {
+                    console.log("GeoJSON请求响应:", res);
+                    return res.json();
+                })
+                .then(data => {
+                    console.log("GeoJSON数据加载成功:", data);
+                    geoData = data;
+                    
+                    L.geoJSON(data, {
+                        style: function(feature) {
+                            const city = feature.properties.name;
+                            const w = weatherData[city];
+                            const color = w ? getColorByTemperature(w.temp) : '#1e40af';
+                            return {
+                                color: color,
+                                weight: 2,
+                                fillOpacity: 0.1,
+                                fillColor: color
+                            };
+                        },
+                        onEachFeature: function(feature, layer) {
+                            layer.on({
+                                mouseover: function(e) {
+                                    const city = feature.properties.name;
+                                    const w = weatherData[city];
+                                    if (w) {
+                                        layer.setStyle({
+                                            weight: 3,
+                                            color: '#1e40af',
+                                            fillOpacity: 0.2
+                                        });
+                                        
+                                        L.popup({
+                                            className: 'city-popup'
+                                        })
+                                            .setLatLng(e.latlng)
+                                            .setContent(`
+                                                <div class="popup-content">
+                                                    <h4 style="color: #1e40af; margin-bottom: 8px;">${city}</h4>
+                                                    <div style="font-size: 24px; font-weight: bold; color: #1f2937;">${w.temp}°C</div>
+                                                    <div style="color: #6b7280; margin: 5px 0;">${w.text}</div>
+                                                    <div style="background: #fef3c7; padding: 5px 10px; border-radius: 5px; display: inline-block; margin: 5px 0;">
+                                                        ${getClothes(w.temp).text}
+                                                    </div>
+                                                </div>
+                                            `)
+                                            .openOn(leafletMap);
+                                    }
+                                },
+                                mouseout: function(e) {
+                                    const city = feature.properties.name;
+                                    const w = weatherData[city];
+                                    const color = w ? getColorByTemperature(w.temp) : '#1e40af';
+                                    layer.setStyle({
+                                        weight: 2,
+                                        color: color,
+                                        fillOpacity: 0.1
+                                    });
+                                    leafletMap.closePopup();
+                                },
+                                click: async function(e) {
+                                    const city = feature.properties.name;
+                                    const w = weatherData[city];
+                                    if (w) {
+                                        await updateCurrentWeather(city, w);
+                                    }
+                                }
+                            });
+                        }
+                    }).addTo(leafletMap);
+                })
+                .catch(err => {
+                    console.error("GeoJSON加载失败:", err);
+                    // 使用默认的GeoData，确保随机推荐功能正常工作
+                    geoData = {
+                        "type": "FeatureCollection",
+                        "features": [
+                            {"type":"Feature","properties":{"name":"昆明市"},"geometry":{"type":"Polygon","coordinates":[[[102.6,24.9],[103.0,24.9],[103.0,25.3],[102.6,25.3],[102.6,24.9]]]}},
+                            {"type":"Feature","properties":{"name":"曲靖市"},"geometry":{"type":"Polygon","coordinates":[[[103.6,24.8],[104.4,24.8],[104.4,26.2],[103.6,26.2],[103.6,24.8]]]}},
+                            {"type":"Feature","properties":{"name":"玉溪市"},"geometry":{"type":"Polygon","coordinates":[[[102.3,23.9],[103.0,23.9],[103.0,24.6],[102.3,24.6],[102.3,23.9]]]}},
+                            {"type":"Feature","properties":{"name":"保山市"},"geometry":{"type":"Polygon","coordinates":[[[98.8,24.5],[99.6,24.5],[99.6,25.4],[98.8,25.4],[98.8,24.5]]]}},
+                            {"type":"Feature","properties":{"name":"昭通市"},"geometry":{"type":"Polygon","coordinates":[[[103.2,26.8],[104.8,26.8],[104.8,28.2],[103.2,28.2],[103.2,26.8]]]}},
+                            {"type":"Feature","properties":{"name":"丽江市"},"geometry":{"type":"Polygon","coordinates":[[[99.8,26.0],[101.4,26.0],[101.4,27.8],[99.8,27.8],[99.8,26.0]]]}},
+                            {"type":"Feature","properties":{"name":"普洱市"},"geometry":{"type":"Polygon","coordinates":[[[99.8,22.5],[101.4,22.5],[101.4,24.2],[99.8,24.2],[99.8,22.5]]]}},
+                            {"type":"Feature","properties":{"name":"临沧市"},"geometry":{"type":"Polygon","coordinates":[[[99.2,23.2],[100.4,23.2],[100.4,24.2],[99.2,24.2],[99.2,23.2]]]}},
+                            {"type":"Feature","properties":{"name":"楚雄彝族自治州"},"geometry":{"type":"Polygon","coordinates":[[[101.0,24.4],[102.2,24.4],[102.2,26.2],[101.0,26.2],[101.0,24.4]]]}},
+                            {"type":"Feature","properties":{"name":"红河哈尼族彝族自治州"},"geometry":{"type":"Polygon","coordinates":[[[102.8,22.6],[104.4,22.6],[104.4,24.8],[102.8,24.8],[102.8,22.6]]]}},
+                            {"type":"Feature","properties":{"name":"文山壮族苗族自治州"},"geometry":{"type":"Polygon","coordinates":[[[103.8,23.2],[105.2,23.2],[105.2,24.4],[103.8,24.4],[103.8,23.2]]]}},
+                            {"type":"Feature","properties":{"name":"西双版纳傣族自治州"},"geometry":{"type":"Polygon","coordinates":[[[100.4,21.4],[101.6,21.4],[101.6,22.8],[100.4,22.8],[100.4,21.4]]]}},
+                            {"type":"Feature","properties":{"name":"大理白族自治州"},"geometry":{"type":"Polygon","coordinates":[[[99.4,25.2],[100.8,25.2],[100.8,26.6],[99.4,26.6],[99.4,25.2]]]}},
+                            {"type":"Feature","properties":{"name":"德宏傣族景颇族自治州"},"geometry":{"type":"Polygon","coordinates":[[[97.6,23.8],[98.6,23.8],[98.6,24.8],[97.6,24.8],[97.6,23.8]]]}},
+                            {"type":"Feature","properties":{"name":"怒江傈僳族自治州"},"geometry":{"type":"Polygon","coordinates":[[[98.4,25.4],[99.4,25.4],[99.4,28.6],[98.4,28.6],[98.4,25.4]]]}},
+                            {"type":"Feature","properties":{"name":"迪庆藏族自治州"},"geometry":{"type":"Polygon","coordinates":[[[98.6,26.8],[100.2,26.8],[100.2,28.8],[98.6,28.8],[98.6,26.8]]]}}
+                        ]
+                    };
+                });
+        }
+    </script>
+</body>
+</html>
