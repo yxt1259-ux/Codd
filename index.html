@@ -14,7 +14,7 @@
         <div class="header">
             <div class="header-left">
                 <span>🌤️</span>
-                <h1>云南旅游气象看板V3.0</h1>
+                <h1>云南旅游气象看板V5.0</h1>
             </div>
             <div class="header-right">
                 <div id="currentDate"></div>
@@ -54,25 +54,27 @@
         
         <div class="main-content">
             <div class="left-panel">
-                <div class="card spots-panel">
-                    <h3 class="card-title">🏞️ 必去景点 (当季推荐)</h3>
-                    <div id="spotsContent">
-                        <p style="text-align:center; opacity:0.5; padding:20px;">点击地图查看景点</p>
+                <div class="card">
+                    <h3 class="card-title">🤖 AI 穿搭建议</h3>
+                    <div id="aiOutfitContent">
+                        <p style="font-size:13px; color:#6b7280; text-align:center; padding:20px;">点击地图上的城市区域，AI 将结合实况天气为您生成穿搭建议...</p>
                     </div>
                 </div>
                 
-                <div class="card ai-outfit-panel">
-                    <h3 class="card-title">🤖 Qwen AI 穿搭建议</h3>
-                    <div id="aiOutfitContent">
-                        <p style="font-size:13px; color:#6b7280; text-align:center; padding:20px;">点击城市，AI 将结合实况天气为您生成穿搭建议...</p>
+                <div class="card poi-panel" id="poiPanel">
+                    <h3 class="card-title">� 周边搜索</h3>
+                    <div class="poi-search-box">
+                        <input type="text" id="poiSearchInput" placeholder="搜索地点名称（如：大理古城）" class="poi-input">
+                        <div class="poi-type-tabs">
+                            <button class="poi-tab-btn active" data-type="food">🍜 美食</button>
+                            <button class="poi-tab-btn" data-type="spots">🏞️ 景点</button>
+                        </div>
+                        <button class="btn btn-primary" id="searchPOI" style="width:100%; margin-top: 10px;">🔍 搜索周边</button>
                     </div>
-                </div>
-
-                <div class="card food-panel">
-                    <h3 class="card-title">🍜 特色美食推荐</h3>
-                    <div id="foodContent">
-                        <p style="font-size:13px; color:#6b7280; text-align:center; padding:20px;">点击地图上的城市地名，获取本地特色美食推荐...</p>
+                    <div id="poiResults" class="poi-results">
+                        <p style="font-size:13px; color:#6b7280; text-align:center; padding:20px;">点击地图上的城市可自动搜索周边美食和景点</p>
                     </div>
+                    <button class="btn" id="clearPOIMarkers" style="width:100%; display: none;">🗑️ 清除标记</button>
                 </div>
             </div>
             
@@ -140,6 +142,7 @@
                     <div class="action-btns">
                         <button class="btn" id="recommendBtn">🎲 随机推荐</button>
                         <button class="btn" id="routeBtn">🗺️ 路线规划</button>
+                        <button class="btn" id="avgForecastBtn">📊 未来天气均值</button>
                     </div>
                 </div>
                 
@@ -153,6 +156,10 @@
                             <input type="checkbox" id="weatherPathToggle" checked>
                             <span class="slider round"></span>
                         </label>
+                    </div>
+                    <button class="btn" id="showWeatherChartBtn" style="width:100%; margin-bottom: 10px; background: #3b82f6; color: white;">📊 显示路线气温折线图</button>
+                    <div id="avgResultToast" class="avg-toast" style="display: none;">
+                        <div class="avg-toast-content"></div>
                     </div>
                     <button class="btn btn-primary" id="searchRoute" style="width:100%">开始规划</button>
                     <div id="routeOptions"></div>

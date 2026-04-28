@@ -63,52 +63,6 @@ def get_outfit():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
-# 美食推荐接口
-@app.route('/api/food', methods=['POST'])
-def get_food():
-    try:
-        data = request.json
-        city = data.get('city', '')
-
-        if not city:
-            return jsonify({"success": False, "error": "城市名称不能为空"}), 400
-
-        api_key = os.environ.get("QWEN_API_KEY")
-
-        if not api_key:
-            return jsonify({"success": False, "error": "后端未配置 API Key"}), 500
-
-        headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
-        }
-
-        payload = {
-            "model": "qwen-plus",
-            "messages": [
-                {"role": "system", "content": "你是一个专业的云南美食推荐专家，擅长介绍云南省各州市的特色美食。"},
-                {"role": "user", "content": f"请为云南省{city}推荐3-5种本地特色美食，每种美食请包含：美食名称、特色介绍（30字内）。请用简洁的列表格式返回。"}
-            ]
-        }
-
-        response = requests.post(
-            "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
-            headers=headers,
-            json=payload,
-            timeout=10
-        )
-
-        res_json = response.json()
-
-        if 'choices' in res_json:
-            reply_text = res_json['choices'][0]['message']['content']
-            return jsonify({"success": True, "text": reply_text, "city": city})
-        else:
-            return jsonify({"success": False, "error": f"AI服务返回异常: {res_json}"})
-
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
-
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)

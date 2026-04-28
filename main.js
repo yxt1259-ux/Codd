@@ -17,25 +17,25 @@ function getCurrentSeason() {
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // ==========================================
-// 2. 核心数据字典：降维匹配与当季景点
+// 2. 核心数据字典：降维匹配、当季景点、美食配置
 // ==========================================
 const yunnanConfig = [
-    { geoNames: ["昆明市", "昆明"], queryAdcode: "530100", standardName: "昆明市", center: [25.0389, 102.7183] },
-    { geoNames: ["曲靖市", "曲靖"], queryAdcode: "530302", standardName: "曲靖市", center: [25.5984, 103.7918] },
-    { geoNames: ["玉溪市", "玉溪"], queryAdcode: "530402", standardName: "玉溪市", center: [24.3522, 102.5487] },
-    { geoNames: ["保山市", "保山"], queryAdcode: "530502", standardName: "保山市", center: [25.1167, 99.1333] },
-    { geoNames: ["昭通市", "昭通"], queryAdcode: "530602", standardName: "昭通市", center: [27.3372, 103.7228] },
-    { geoNames: ["丽江市", "丽江"], queryAdcode: "530702", standardName: "丽江市", center: [26.8679, 100.2202] },
-    { geoNames: ["普洱市", "普洱"], queryAdcode: "530802", standardName: "普洱市", center: [22.7974, 100.9736] },
-    { geoNames: ["临沧市", "临沧"], queryAdcode: "530902", standardName: "临沧市", center: [23.8766, 100.0998] },
-    { geoNames: ["楚雄州", "楚雄彝族自治州", "楚雄"], queryAdcode: "532301", standardName: "楚雄彝族自治州", center: [25.0208, 101.5300] },
-    { geoNames: ["红河州", "红河哈尼族彝族自治州", "红河"], queryAdcode: "532502", standardName: "红河哈尼族彝族自治州", center: [23.3789, 103.1939] },
-    { geoNames: ["文山州", "文山壮族苗族自治州", "文山"], queryAdcode: "532601", standardName: "文山壮族苗族自治州", center: [23.3901, 104.2482] },
-    { geoNames: ["西双版纳", "西双版纳州", "西双版纳傣族自治州"], queryAdcode: "532801", standardName: "西双版纳傣族自治州", center: [22.0085, 100.8133] },
-    { geoNames: ["大理州", "大理白族自治州", "大理"], queryAdcode: "532901", standardName: "大理白族自治州", center: [25.6977, 100.1996] },
-    { geoNames: ["德宏州", "德宏傣族景颇族自治州", "德宏"], queryAdcode: "533103", standardName: "德宏傣族景颇族自治州", center: [24.4432, 97.9500] },
-    { geoNames: ["怒江州", "怒江傈僳族自治州", "怒江"], queryAdcode: "533301", standardName: "怒江傈僳族自治州", center: [26.9402, 98.7855] },
-    { geoNames: ["迪庆州", "迪庆藏族自治州", "迪庆"], queryAdcode: "533401", standardName: "迪庆藏族自治州", center: [27.8373, 99.7078] }
+    { geoNames: ["昆明市", "昆明"], queryAdcode: "530100", standardName: "昆明市", shortName: "昆明", center: [25.0389, 102.7183] },
+    { geoNames: ["曲靖市", "曲靖"], queryAdcode: "530302", standardName: "曲靖市", shortName: "曲靖", center: [25.5984, 103.7918] },
+    { geoNames: ["玉溪市", "玉溪"], queryAdcode: "530402", standardName: "玉溪市", shortName: "玉溪", center: [24.3522, 102.5487] },
+    { geoNames: ["保山市", "保山"], queryAdcode: "530502", standardName: "保山市", shortName: "保山", center: [25.1167, 99.1333] },
+    { geoNames: ["昭通市", "昭通"], queryAdcode: "530602", standardName: "昭通市", shortName: "昭通", center: [27.3372, 103.7228] },
+    { geoNames: ["丽江市", "丽江"], queryAdcode: "530702", standardName: "丽江市", shortName: "丽江", center: [26.8679, 100.2202] },
+    { geoNames: ["普洱市", "普洱"], queryAdcode: "530802", standardName: "普洱市", shortName: "普洱", center: [22.7974, 100.9736] },
+    { geoNames: ["临沧市", "临沧"], queryAdcode: "530902", standardName: "临沧市", shortName: "临沧", center: [23.8766, 100.0998] },
+    { geoNames: ["楚雄州", "楚雄彝族自治州", "楚雄"], queryAdcode: "532301", standardName: "楚雄彝族自治州", shortName: "楚雄州", center: [25.0208, 101.5300] },
+    { geoNames: ["红河州", "红河哈尼族彝族自治州", "红河"], queryAdcode: "532502", standardName: "红河哈尼族彝族自治州", shortName: "红河州", center: [23.3789, 103.1939] },
+    { geoNames: ["文山州", "文山壮族苗族自治州", "文山"], queryAdcode: "532601", standardName: "文山壮族苗族自治州", shortName: "文山州", center: [23.3901, 104.2482] },
+    { geoNames: ["西双版纳", "西双版纳州", "西双版纳傣族自治州"], queryAdcode: "532801", standardName: "西双版纳傣族自治州", shortName: "西双版纳", center: [22.0085, 100.8133] },
+    { geoNames: ["大理州", "大理白族自治州", "大理"], queryAdcode: "532901", standardName: "大理白族自治州", shortName: "大理州", center: [25.6977, 100.1996] },
+    { geoNames: ["德宏州", "德宏傣族景颇族自治州", "德宏"], queryAdcode: "533103", standardName: "德宏傣族景颇族自治州", shortName: "德宏州", center: [24.4432, 97.9500] },
+    { geoNames: ["怒江州", "怒江傈僳族自治州", "怒江"], queryAdcode: "533301", standardName: "怒江傈僳族自治州", shortName: "怒江州", center: [26.9402, 98.7855] },
+    { geoNames: ["迪庆州", "迪庆藏族自治州", "迪庆"], queryAdcode: "533401", standardName: "迪庆藏族自治州", shortName: "迪庆州", center: [27.8373, 99.7078] }
 ];
 
 const travelSpotsConfig = {
@@ -57,11 +57,73 @@ const travelSpotsConfig = {
     "怒江傈僳族自治州": {"春季": ["怒江第一湾", "丙中洛"], "夏季": ["怒江大峡谷", "石月亮"], "秋季": ["老姆登村", "秋那桶"], "冬季": ["独龙江探秘", "澡堂会"]}
 };
 
+// 新增：本地特色美食配置
+const foodConfig = {
+    "昆明市": ["过桥米线：汤鲜味美，米线爽滑", "汽锅鸡：原汁原味，滋补佳品", "烧饵块：软糯咸香，街头风味"],
+    "大理白族自治州": ["大理酸辣鱼：洱海鱼鲜，酸辣开胃", "乳扇：奶香浓郁，可烤可炸", "喜洲粑粑：外酥里软，甜咸皆宜"],
+    "丽江市": ["腊排骨火锅：咸香浓郁，越煮越香", "鸡豆凉粉：爽滑酸辣，夏日必吃", "纳西烤鱼：外焦里嫩，香料独特"],
+    "西双版纳傣族自治州": ["傣味烧烤：香茅草烤鱼，酸辣入味", "菠萝紫米饭：果香米香交融", "喃咪拼盘：傣家蘸酱，清爽开胃"],
+    "迪庆藏族自治州": ["牦牛肉火锅：高原风味，暖身滋补", "酥油茶：咸香醇厚，御寒佳品", "青稞饼：麦香浓郁，越嚼越香"],
+    "保山市": ["大救驾：饵块炒制，典故名菜", "火烧肉：皮脆肉嫩，蘸水一绝", "腾冲土锅子：食材丰富，汤鲜味美"],
+    "红河哈尼族彝族自治州": ["建水烧豆腐：外焦里嫩，蘸料灵魂", "蒙自过桥米线：发源之地，风味正宗", "石屏豆腐：天然井水点制，鲜嫩爽滑"],
+    "文山壮族苗族自治州": ["三七汽锅鸡：药膳同源，滋补强身", "广南岜夯鸡：酸汤开胃，鸡肉鲜嫩", "花糯米饭：色彩缤纷，清香软糯"],
+    "曲靖市": ["沾益辣子鸡：香辣过瘾，滇菜代表", "宣威火腿：咸香回甘，煲汤炒菜皆宜", "蒸饵丝：软糯弹牙，甜咸酱香"],
+    "玉溪市": ["抚仙湖铜锅鱼：鱼肉鲜甜，原汤化原食", "江川盐水鱼：咸香紧实，冷热皆宜", "通海豆末糖：酥脆香甜，入口即化"],
+    "昭通市": ["昭通小肉串：麻辣鲜香，深夜食堂", "天麻火腿鸡：药膳滋补，汤鲜肉烂", "油糕饵块：酥脆软糯，早餐标配"],
+    "普洱市": ["普洱鸡豆腐：鸡肉嫩滑，汤底醇厚", "江城黄牛干巴：嚼劲十足，越嚼越香", "景东火腿木瓜鸡：酸香开胃，风味独特"],
+    "临沧市": ["火腿木瓜鸡：酸辣开胃，鸡肉鲜嫩", "佤族鸡肉烂饭：软糯鲜香，民族风味", "凤庆腊肉：晶莹剔透，咸香不腻"],
+    "楚雄彝族自治州": ["野生菌火锅：菌香四溢，山珍荟萃", "元谋凉鸡：皮爽肉滑，蘸水提味", "姚安套肠：层层相套，风味独特"],
+    "德宏傣族景颇族自治州": ["撒撇：苦凉回甘，傣味灵魂", "景颇鬼鸡：酸辣开胃，香料独特", "泡鲁达：椰香浓郁，甜品首选"],
+    "怒江傈僳族自治州": ["漆油鸡：漆油炖煮，滋补暖身", "傈僳手抓饭：食材丰富，民族盛宴", "老窝火腿：高山放养，肉质紧实"]
+};
+
 let weatherData = {}; 
 let geoJsonLayer = null;
 let currentMapType = 'standard';
 let routeLayers = [];
-let cityLabelsLayer = null; // 自定义地名标注图层
+let cityLabelsLayer = null;
+let cityCenters = {};
+
+// 用于临时标记起终点的图层变量
+let tempStartMarker = null;
+let tempEndMarker = null;
+
+// 缓存对象：用于存储天气预报数据
+let forecastCache = {}; 
+const CACHE_DURATION = 10 * 60 * 1000; 
+
+// 均值数据变量
+let avgWeatherData = {};
+
+// 地图显示模式：'realtime' 或 'average'
+let mapDisplayMode = 'realtime';
+
+// 当前选中的城市（用于POI自动搜索）
+let currentSelectedCity = null;
+
+// 标签页切换逻辑
+function setupTabNavigation() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tabId = this.dataset.tab;
+            
+            // 移除所有按钮的active类
+            tabBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // 隐藏所有内容面板
+            const panels = document.querySelectorAll('.tab-panel-content');
+            panels.forEach(p => p.classList.remove('active'));
+            
+            // 显示对应面板
+            const activePanel = document.getElementById(`${tabId}Panel`);
+            if (activePanel) {
+                activePanel.classList.add('active');
+            }
+        });
+    });
+}
 
 // 修改为请求我们自己的 Python 后端
 async function getAIOutfit(city, weather, temp) {
@@ -69,7 +131,6 @@ async function getAIOutfit(city, weather, temp) {
     outfitContent.innerHTML = `<div style="text-align:center; padding:15px; color:#3b82f6;">⏳ 正在呼叫 Python 后端，请求 AI 穿搭...</div>`;
     
     try {
-        // 向你刚刚写的 Python 接口发请求 (Vercel会自动路由到 api/outfit.py)
         const response = await fetch('https://weather-map-x2it.onrender.com/api/outfit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -98,47 +159,33 @@ async function getAIOutfit(city, weather, temp) {
 // ==========================================
 // 4. 数据获取与面板更新逻辑
 // ==========================================
-// 获取全省天气（带排队延迟，防拦截）
 async function fetchAllWeather() {
     const apiKey = config.amapApiKey;
     let alertMessages = [];
     
-    // 内部帮助函数：带重试机制的请求
     async function fetchWithRetry(adcode, standardName, maxRetries = 3) {
         for (let i = 0; i < maxRetries; i++) {
             try {
-                // 发起请求
                 const res = await fetch(`https://restapi.amap.com/v3/weather/weatherInfo?key=${apiKey}&city=${adcode}&extensions=base`);
                 const data = await res.json();
-                
-                // 如果成功拿到数据，直接返回
                 if (data.status === '1' && data.lives.length > 0) {
                     return data.lives[0]; 
                 } else {
                     throw new Error("接口返回状态异常");
                 }
             } catch (err) {
-                // 如果失败，打印警告，并等待 500 毫秒后进行下一次重试
                 console.warn(`[${standardName}] 第 ${i + 1} 次请求失败，正在准备重试...`);
-                if (i < maxRetries - 1) {
-                    await sleep(500); // 失败后的喘息时间
-                }
+                if (i < maxRetries - 1) await sleep(500);
             }
         }
-        // 如果 3 次全都失败了，才真正放弃
         console.error(`[${standardName}] 连续 ${maxRetries} 次请求彻底失败。`);
         return null; 
     }
 
-    // 主循环：依次获取16州市
     for (const item of yunnanConfig) {
-        await sleep(100); // 基础排队间隔，增加到 100 毫秒更稳妥
-        
-        // 调用我们刚刚写的带重试的函数
+        await sleep(100);
         const w = await fetchWithRetry(item.queryAdcode, item.standardName);
-        
         if (w) {
-            // 请求成功，存入全局数据
             weatherData[item.standardName] = {
                 adcode: item.queryAdcode, 
                 standardName: item.standardName,
@@ -148,8 +195,6 @@ async function fetchAllWeather() {
                 windDir: w.winddirection,
                 windScale: w.windpower
             };
-            
-            // 预警检测
             const alertKeywords = ["大雨", "暴雨", "阵雨", "雷", "大风", "冰雹", "雪"];
             if (alertKeywords.some(key => w.weather.includes(key))) {
                 alertMessages.push(`【${item.standardName}】${w.weather}`);
@@ -157,51 +202,352 @@ async function fetchAllWeather() {
         }
     }
     
-    // 更新预警条
     if (alertMessages.length > 0) {
         document.getElementById('alertBar').style.display = 'flex';
         document.getElementById('alertText').innerText = alertMessages.join(" ｜ ") + "，请注意防范！";
     }
 }
 
-// 双重模糊安全匹配
 function getSafeWeatherData(geoName) {
     const shortName = geoName.replace(/(市|州|自治州|地区|傣族|景颇族|傈僳族|藏族|白族|壮族|苗族|哈尼族|彝族)/g, '');
     const configItem = yunnanConfig.find(item => item.geoNames.some(n => n.includes(shortName)));
-    return configItem ? weatherData[configItem.standardName] : null;
+    if (!configItem) return null;
+    
+    // 根据显示模式返回不同的数据
+    if (mapDisplayMode === 'average') {
+        return avgWeatherData[configItem.standardName] || null;
+    } else {
+        return weatherData[configItem.standardName] || null;
+    }
 }
 
-// 获取7天预报
 function updateForecast(adcode) {
     const container = document.getElementById('forecastContainer');
     container.innerHTML = '<p style="font-size:12px;opacity:0.8;">加载预报中...</p>';
     
+    // 检查缓存
+    const cached = forecastCache[adcode];
+    if (cached && (Date.now() - cached.timestamp) < CACHE_DURATION) {
+        // 使用缓存数据
+        renderForecast(cached.forecasts, adcode);
+        return;
+    }
+    
+    // 请求新数据
     fetch(`https://restapi.amap.com/v3/weather/weatherInfo?key=${config.amapApiKey}&city=${adcode}&extensions=all`)
         .then(res => res.json())
         .then(data => {
             if (data.status === '1' && data.forecasts.length > 0) {
-                container.innerHTML = '';
-                const casts = data.forecasts[0].casts; 
-                document.getElementById('tempRangeDisplay').textContent = `今日气温：${casts[0].nighttemp}℃ ~ ${casts[0].daytemp}℃`;
-                
-                casts.forEach(f => {
-                    const dateShort = f.date.split('-').slice(1).join('/'); 
-                    container.innerHTML += `
-                        <div class="forecast-card">
-                            <div style="opacity:0.8; font-size: 11px;">${dateShort}</div>
-                            <div style="font-size: 16px; margin: 5px 0;">
-                                ${f.dayweather.includes('晴') ? '☀️' : f.dayweather.includes('雨') ? '🌧️' : '☁️'}
-                            </div>
-                            <div style="font-weight:bold; font-size:11px;">${f.dayweather}</div>
-                            <div style="font-size:11px; margin-top:4px;">${f.nighttemp}~${f.daytemp}℃</div>
-                        </div>
-                    `;
-                });
+                const casts = data.forecasts[0].casts;
+                // 存入缓存
+                forecastCache[adcode] = {
+                    forecasts: casts,
+                    timestamp: Date.now()
+                };
+                renderForecast(casts, adcode);
+            } else {
+                container.innerHTML = '<p style="font-size:12px;opacity:0.8;">暂无预报数据</p>';
             }
+        })
+        .catch(err => {
+            console.error('获取预报失败', err);
+            container.innerHTML = '<p style="font-size:12px;color:#ef4444;">预报加载失败</p>';
         });
 }
 
-// 更新当季景点
+// 提取渲染预报的逻辑
+function renderForecast(casts, adcode) {
+    const container = document.getElementById('forecastContainer');
+    container.innerHTML = '';
+    // 更新今日气温范围（使用当天数据）
+    document.getElementById('tempRangeDisplay').textContent = `今日气温：${casts[0].nighttemp}℃ ~ ${casts[0].daytemp}℃`;
+    
+    casts.forEach(f => {
+        const dateShort = f.date.split('-').slice(1).join('/');
+        container.innerHTML += `
+            <div class="forecast-card">
+                <div style="opacity:0.8; font-size: 11px;">${dateShort}</div>
+                <div style="font-size: 16px; margin: 5px 0;">
+                    ${f.dayweather.includes('晴') ? '☀️' : f.dayweather.includes('雨') ? '🌧️' : '☁️'}
+                </div>
+                <div style="font-weight:bold; font-size:11px;">${f.dayweather}</div>
+                <div style="font-size:11px; margin-top:4px;">${f.nighttemp}~${f.daytemp}℃</div>
+            </div>
+        `;
+    });
+}
+
+// 计算未来 n 天（不含当天）的均值，n 默认为 3 
+function computeForecastAverage(adcode, days = 3) { 
+    const cached = forecastCache[adcode]; 
+    if (!cached) { 
+        return null; // 还未请求预报 
+    } 
+    const casts = cached.forecasts; 
+    // casts[0] 是当天，从索引 1 开始取 days 天 
+    const futureCasts = casts.slice(1, 1 + days); 
+    if (futureCasts.length === 0) return null; 
+    
+    let sumDayTemp = 0, sumNightTemp = 0; 
+    let weatherCount = {}; 
+    futureCasts.forEach(cast => { 
+        sumDayTemp += parseInt(cast.daytemp); 
+        sumNightTemp += parseInt(cast.nighttemp); 
+        const weather = cast.dayweather; 
+        weatherCount[weather] = (weatherCount[weather] || 0) + 1; 
+    }); 
+    const avgDayTemp = (sumDayTemp / futureCasts.length).toFixed(1); 
+    const avgNightTemp = (sumNightTemp / futureCasts.length).toFixed(1); 
+    // 天气众数 
+    let modeWeather = ''; 
+    let maxCount = 0; 
+    for (let [w, count] of Object.entries(weatherCount)) { 
+        if (count > maxCount) { 
+            maxCount = count; 
+            modeWeather = w; 
+        } 
+    } 
+    return { 
+        avgDayTemp, 
+        avgNightTemp, 
+        modeWeather, 
+        days: futureCasts.length 
+    }; 
+} 
+
+// 显示均值结果（不显示 toast 浮动提示） 
+function showAvgResult(adcode, cityName) { 
+    const result = computeForecastAverage(adcode); 
+    if (!result) { 
+        // 如果还没有预报缓存，主动触发一次预报请求，然后等待完成后再计算 
+        const container = document.getElementById('forecastContainer'); 
+        const observer = new MutationObserver(function(mutations) { 
+            if (forecastCache[adcode]) { 
+                observer.disconnect(); 
+            } 
+        }); 
+        observer.observe(container, { childList: true, subtree: true }); 
+        // 如果已经请求过但还没有缓存（请求中），等待；否则主动请求 
+        if (!forecastCache[adcode]) { 
+            updateForecast(adcode); 
+        } 
+        return; 
+    } 
+} 
+
+// 更新分级图列
+function updateLegend() {
+    const legendTitle = document.querySelector('.temp-legend .legend-title');
+    if (legendTitle) {
+        if (mapDisplayMode === 'average') {
+            legendTitle.textContent = '平均温度 (℃)';
+        } else {
+            legendTitle.textContent = '温度 (℃)';
+        }
+    }
+}
+
+// 计算所有城市的天气均值并更新地图显示
+async function showAllCitiesAvg() {
+    // 清空之前的均值数据
+    avgWeatherData = {};
+    
+    // 为所有城市获取预报数据
+    for (const cityItem of yunnanConfig) {
+        const adcode = cityItem.queryAdcode;
+        const standardName = cityItem.standardName;
+        
+        // 检查缓存，如果没有缓存则请求数据
+        if (!forecastCache[adcode]) {
+            // 等待预报数据加载
+            await new Promise(resolve => {
+                const container = document.getElementById('forecastContainer');
+                const observer = new MutationObserver(() => {
+                    if (forecastCache[adcode]) {
+                        observer.disconnect();
+                        resolve();
+                    }
+                });
+                observer.observe(container, { childList: true, subtree: true });
+                updateForecast(adcode);
+                
+                // 设置超时
+                setTimeout(() => {
+                    observer.disconnect();
+                    resolve();
+                }, 5000);
+            });
+        }
+        
+        // 计算均值
+        const avgResult = computeForecastAverage(adcode);
+        if (avgResult) {
+            // 构建均值数据对象，结构与weatherData保持一致
+            avgWeatherData[standardName] = {
+                adcode: adcode,
+                standardName: standardName,
+                temp: avgResult.avgDayTemp, // 使用平均最高气温作为显示温度
+                text: avgResult.modeWeather, // 使用代表性天气
+                humidity: 'N/A', // 均值数据中没有湿度
+                windDir: 'N/A', // 均值数据中没有风向
+                windScale: 'N/A' // 均值数据中没有风速
+            };
+        }
+    }
+    
+    // 切换到均值显示模式
+    mapDisplayMode = 'average';
+    
+    // 刷新地图图层，显示均值的分级色彩
+    if (geoJsonLayer) {
+        geoJsonLayer.eachLayer(layer => {
+            const w = getSafeWeatherData(layer.feature.properties.name);
+            layer.setStyle(getFeatureStyle(w ? w.temp : 20, false));
+            layer.bringToBack();
+        });
+    }
+    
+    // 刷新城市标签，确保悬停时显示正确的数据
+    createCityLabels();
+    
+    // 更新分级图列
+    updateLegend();
+}
+
+// 切换到实时天气显示模式
+function switchToRealtimeMode() {
+    mapDisplayMode = 'realtime';
+    
+    // 刷新地图图层，显示实时天气的分级色彩
+    if (geoJsonLayer) {
+        geoJsonLayer.eachLayer(layer => {
+            const w = getSafeWeatherData(layer.feature.properties.name);
+            layer.setStyle(getFeatureStyle(w ? w.temp : 20, false));
+            layer.bringToBack();
+        });
+    }
+    
+    // 刷新城市标签，确保悬停时显示正确的数据
+    createCityLabels();
+    
+    // 更新分级图列
+    updateLegend();
+    
+    // 更新按钮状态
+    const avgBtn = document.getElementById('avgForecastBtn');
+    if (avgBtn) {
+        avgBtn.textContent = '📊 未来天气均值';
+        // 移除之前的点击事件
+        avgBtn.removeEventListener('click', switchToRealtimeMode);
+        // 添加新的点击事件
+        avgBtn.addEventListener('click', showAverageMode);
+    }
+}
+
+// 显示均值模式
+async function showAverageMode() {
+    const currentCity = document.getElementById('cityNameDisplay').textContent;
+    if (!currentCity || currentCity === '云南省') {
+        alert('请先点击地图选择一个城市');
+        return;
+    }
+    // 根据城市名称找到对应的 adcode
+    const cityItem = yunnanConfig.find(item => item.standardName === currentCity);
+    if (!cityItem) {
+        alert('无法获取该城市代码');
+        return;
+    }
+    // 禁用按钮防止重复点击
+    const avgBtn = document.getElementById('avgForecastBtn');
+    if (avgBtn) {
+        avgBtn.disabled = true;
+        avgBtn.textContent = '⏳ 计算中...';
+    }
+    
+    try {
+        // 确保当前城市的预报已加载
+        if (!forecastCache[cityItem.queryAdcode]) {
+            await new Promise(resolve => {
+                const container = document.getElementById('forecastContainer');
+                const observer = new MutationObserver(() => {
+                    if (forecastCache[cityItem.queryAdcode]) {
+                        observer.disconnect();
+                        resolve();
+                    }
+                });
+                observer.observe(container, { childList: true, subtree: true });
+                updateForecast(cityItem.queryAdcode);
+                
+                // 设置超时
+                setTimeout(() => {
+                    observer.disconnect();
+                    resolve();
+                }, 10000);
+            });
+        }
+        
+        // 显示当前城市的均值
+        showAvgResult(cityItem.queryAdcode, currentCity);
+        
+        // 计算所有城市的均值并更新地图显示
+        await showAllCitiesAvg();
+        
+        // 更新按钮状态，变为切换回实时模式
+        if (avgBtn) {
+            avgBtn.textContent = '🌤️ 实时天气';
+            // 移除之前的点击事件
+            avgBtn.removeEventListener('click', showAverageMode);
+            // 添加新的点击事件
+            avgBtn.addEventListener('click', switchToRealtimeMode);
+        }
+    } catch (error) {
+        console.error('计算均值失败:', error);
+        alert('计算均值失败，请稍后再试');
+        // 恢复按钮状态
+        if (avgBtn) {
+            avgBtn.disabled = false;
+            avgBtn.textContent = '📊 未来天气均值';
+        }
+    } finally {
+        // 恢复按钮状态
+        if (avgBtn) {
+            avgBtn.disabled = false;
+        }
+    }
+}
+
+// 绑定均值按钮的事件 
+let avgBtn = document.getElementById('avgForecastBtn'); 
+if (avgBtn) { 
+    avgBtn.addEventListener('click', showAverageMode);
+}
+
+// 绑定显示路线气温折线图按钮的事件
+let showWeatherChartBtn = document.getElementById('showWeatherChartBtn');
+if (showWeatherChartBtn) {
+    showWeatherChartBtn.addEventListener('click', function() {
+        if (routeWeatherData.length === 0) {
+            alert('请先规划路线并获取路径天气数据');
+            return;
+        }
+        
+        const routeOptions = document.getElementById('routeOptions');
+        const chartHtml = createWeatherChart(routeWeatherData);
+        
+        if (routeOptions && chartHtml) {
+            const existingChart = routeOptions.querySelector('.weather-chart-container');
+            if (existingChart) {
+                existingChart.innerHTML = chartHtml;
+            } else {
+                const chartContainer = document.createElement('div');
+                chartContainer.className = 'weather-chart-container';
+                chartContainer.innerHTML = chartHtml;
+                routeOptions.appendChild(chartContainer);
+            }
+        }
+    });
+}
+
 function updateTouristSpots(standardName) {
     const seasonData = travelSpotsConfig[standardName];
     const contentDiv = document.getElementById('spotsContent');
@@ -210,8 +556,7 @@ function updateTouristSpots(standardName) {
         const currentSeason = getCurrentSeason(); 
         const currentSpots = seasonData[currentSeason] || [];
 
-        let html = ``;
-        html += `<div style="background: #dbeafe; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #3b82f6;">`;
+        let html = `<div style="background: #dbeafe; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #3b82f6;">`;
         html += `<div style="font-weight: bold; color: #1d4ed8; margin-bottom: 10px;">✨ ${currentSeason}最适宜</div>`;
         
         if (currentSpots.length > 0) {
@@ -239,7 +584,32 @@ function updateTouristSpots(standardName) {
     }
 }
 
-// 更新右侧主面板数据
+// 本地美食渲染函数
+function updateLocalFood(standardName) {
+    const foodContent = document.getElementById('foodContent');
+    const foodList = foodConfig[standardName];
+    
+    if (foodList && foodList.length > 0) {
+        let html = `<div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #f59e0b;">`;
+        html += `<div style="font-weight: bold; color: #92400e; margin-bottom: 10px;">🍜 ${standardName} 特色美食</div>`;
+        
+        foodList.forEach(food => {
+            let parts = food.split(/[：:]/);
+            if (parts.length >= 2) {
+                let name = parts[0].trim();
+                let desc = parts.slice(1).join(':').trim();
+                html += `<div class="spots-item" style="border-left-color: #f59e0b;"><span style="margin-right:8px; color:#d97706;">🍴</span><span style="font-weight:bold; color:#1f2937;">${name}</span><span style="margin-left:8px; font-size:12px; color:#6b7280;">${desc}</span></div>`;
+            } else {
+                html += `<div class="spots-item" style="border-left-color: #f59e0b;"><span style="margin-right:8px; color:#d97706;">🍴</span><span style="font-weight:bold; color:#1f2937;">${food}</span></div>`;
+            }
+        });
+        html += `</div>`;
+        foodContent.innerHTML = html;
+    } else {
+        foodContent.innerHTML = `<p style="text-align:center; color:#9ca3af; padding:20px;">暂无美食数据</p>`;
+    }
+}
+
 function updateMainPanel(standardName, w) {
     document.getElementById('cityNameDisplay').textContent = standardName;
     document.getElementById('currentTempDisplay').textContent = `${w.temp}℃`;
@@ -255,53 +625,26 @@ function updateMainPanel(standardName, w) {
     document.getElementById('windSpeed').textContent = w.windScale;
     document.getElementById('windDir').textContent = w.windDir.includes('风') ? w.windDir : w.windDir + '风';
     
-    // 触发子组件更新
     updateForecast(w.adcode);
-    updateTouristSpots(standardName);
-    getAIOutfit(standardName, w.text, w.temp); // 触发 Qwen AI！
-    getAIFood(standardName); // 触发美食推荐
+    getAIOutfit(standardName, w.text, w.temp);
+    
+    currentSelectedCity = standardName;
+    autoSearchNearby(standardName);
 }
 
-// 获取AI美食推荐
-async function getAIFood(city) {
-    const foodContent = document.getElementById('foodContent');
-    if (!foodContent) return;
-
-    foodContent.innerHTML = `<div style="text-align:center; padding:15px; color:#3b82f6;">⏳ 正在呼叫 AI 获取美食推荐...</div>`;
-
-    try {
-        const cityName = city.replace(/市|区|县/g, '');
-        const response = await fetch('/api/food', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ city: cityName })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            let formattedText = data.text
-                .replace(/\n/g, '<br>')
-                .replace(/•/g, '🍴')
-                .replace(/[-*]/g, '');
-
-            foodContent.innerHTML = `
-                <div style="background:#fef3c7; padding:12px; border-radius:8px; margin-bottom:15px; border-left:4px solid #f59e0b;">
-                    <div style="font-weight:bold; color:#92400e; margin-bottom:5px;">🏨 ${data.city}特色美食</div>
-                </div>
-                <div class="food-list">
-                    ${formattedText.split('<br>').filter(line => line.trim()).map(item => `
-                        <div style="padding:8px 0; border-bottom:1px solid #f3f4f6; font-size:13px; color:#374151;">
-                            ${item}
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        } else {
-            foodContent.innerHTML = `<p style="color:#ef4444; text-align:center; padding:15px;">获取失败：${data.error}</p>`;
-        }
-    } catch (err) {
-        foodContent.innerHTML = `<p style="color:#ef4444; text-align:center; padding:15px;">请求失败，请稍后重试</p>`;
+async function autoSearchNearby(cityName) {
+    const poiResults = document.getElementById('poiResults');
+    const currentType = document.querySelector('.poi-tab-btn.active').dataset.type;
+    
+    poiResults.innerHTML = `<p style="text-align:center; padding:20px; color:#3b82f6;">🔍 正在搜索 ${cityName} 周边...</p>`;
+    
+    const result = await searchPOI(cityName, currentType);
+    
+    if (result.success) {
+        renderPOIResults(result.data, currentType);
+        showPOIMarkers(result.data, currentType);
+    } else {
+        poiResults.innerHTML = `<p style="font-size:13px; color:#ef4444; text-align:center; padding:20px;">${result.message}</p>`;
     }
 }
 
@@ -324,22 +667,17 @@ window.changeMapLayer = function(type) {
         geoJsonLayer.eachLayer(layer => {
             const w = getSafeWeatherData(layer.feature.properties.name);
             layer.setStyle(getFeatureStyle(w ? w.temp : 20, false));
-            // 将GeoJSON图层移到所有图层的后面，确保底图上的地名显示在温度图层上方
             layer.bringToBack();
         });
     }
     
-    // 确保自定义地名标注图层在最顶层
     if (cityLabelsLayer) {
-        // layerGroup没有bringToFront方法，通过重新添加到地图来确保在顶层
         leafletMap.addLayer(cityLabelsLayer);
     }
 };
 
-// 添加地图缩放事件监听器，实现地名标注的缩放适配
 leafletMap.on('zoomend', updateCityLabelsSize);
 
-// 地名显示开关点击事件
 document.getElementById('cityLabelsToggle').addEventListener('change', function() {
     cityLabelsEnabled = this.checked;
     saveCityLabelsState();
@@ -365,96 +703,115 @@ function getFeatureStyle(temp, isHover = false) {
     }
 }
 
-// 核心城市列表
 const coreCities = ['昆明市', '玉溪市', '曲靖市'];
-
-// 地名显示开关状态
 let cityLabelsEnabled = true;
 
-// 从localStorage加载地名显示开关状态
 function loadCityLabelsState() {
     const savedState = localStorage.getItem('cityLabelsEnabled');
     if (savedState !== null) {
         cityLabelsEnabled = savedState === 'true';
-        // 更新开关按钮状态
         const toggleBtn = document.getElementById('cityLabelsToggle');
-        if (toggleBtn) {
-            toggleBtn.checked = cityLabelsEnabled;
-        }
+        if (toggleBtn) toggleBtn.checked = cityLabelsEnabled;
     }
 }
 
-// 保存地名显示开关状态到localStorage
 function saveCityLabelsState() {
     localStorage.setItem('cityLabelsEnabled', cityLabelsEnabled.toString());
 }
 
-// 创建自定义地名标注图层
 function createCityLabels() {
-    // 清除现有的地名标注图层
     if (cityLabelsLayer) {
         leafletMap.removeLayer(cityLabelsLayer);
     }
+    if (!cityLabelsEnabled) return;
     
-    // 如果地名显示开关关闭，直接返回
-    if (!cityLabelsEnabled) {
-        return;
-    }
-    
-    // 创建新的图层组
     cityLabelsLayer = L.layerGroup();
-    
     const zoom = leafletMap.getZoom();
     
-    // 遍历云南配置中的每个州市
     yunnanConfig.forEach(item => {
-        if (item.center) {
-            const [lat, lng] = item.center;
-            const cityName = item.standardName;
-            
-            // 放大时只显示核心城市
-            if (zoom > 10 && !coreCities.includes(cityName)) {
-                return;
+        let cityName = item.standardName;
+        
+        // 缩放级别小于8时，优先使用短名称，避免重叠和超出
+        if (zoom < 8 && item.shortName) {
+            cityName = item.shortName;
+        } else {
+            // 对长地名进行智能换行（超过6个字符时插入<br>）
+            if (cityName.length > 6) {
+                // 在民族名称后或适当位置换行
+                cityName = cityName.replace(/(哈尼族|彝族|壮族|苗族|白族|傣族|景颇族|傈僳族|藏族)/g, '$1<br>');
+                // 如果替换后还是太长，再在“自治州”前换行
+                cityName = cityName.replace('自治州', '<br>自治州');
             }
-            
-            // 创建自定义标注
-            const label = L.divIcon({
-                html: `<div class="city-label" style="font-size: 14px; font-weight: bold; color: #000000; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); -webkit-text-stroke: 0.5px #333; white-space: nowrap; padding: 2px 8px; border-radius: 4px;">${cityName}</div>`,
-                className: 'city-label-icon',
-                iconSize: [0, 0], // 自动调整大小
-                iconAnchor: [0, 0]
-            });
-            
-            // 创建标记并添加到图层组
-            const marker = L.marker([lat, lng], {
-                icon: label,
-                zIndexOffset: 300 // 设置z-index为300，确保在最顶层
-            }).addTo(cityLabelsLayer);
         }
+        
+        // 处理核心城市显示
+        if (zoom > 10 && !coreCities.includes(item.standardName) && !coreCities.includes(item.shortName)) return;
+        
+        let center = cityCenters[item.standardName];
+        if (!center) {
+            console.warn(`未找到 ${item.standardName} 的中心坐标，使用配置中心`);
+            center = item.center;
+        }
+        
+        let baseFontSize = Math.max(11, Math.min(16, 10 + (zoom - 6) * 1.5));
+        const displayName = cityName;
+        const charCount = displayName.replace(/<br>/g, '').length;
+        if (charCount > 8) baseFontSize = Math.max(10, baseFontSize - 2);
+        
+        const labelHtml = `<div class="city-label" style="
+            font-size: ${baseFontSize}px;
+            font-weight: bold;
+            font-family: 'KaiTi', '楷体', 'STKaiti', serif;
+            color: #000;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+            background: rgba(255, 255, 255, 0.7);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(100,100,100,0.3);
+            white-space: nowrap;
+            text-align: center;
+            line-height: 1.4;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            backdrop-filter: blur(2px);
+            max-width: 120px;
+            word-break: keep-all;
+        ">${displayName}</div>`;
+        
+        const tempSpan = document.createElement('span');
+        tempSpan.style.visibility = 'hidden';
+        tempSpan.style.position = 'absolute';
+        tempSpan.style.fontSize = baseFontSize + 'px';
+        tempSpan.style.fontWeight = 'bold';
+        tempSpan.style.fontFamily = "'KaiTi', '楷体', 'STKaiti', serif";
+        tempSpan.style.padding = '4px 8px';
+        tempSpan.style.whiteSpace = 'nowrap';
+        tempSpan.innerHTML = displayName.replace(/<br>/g, '');
+        document.body.appendChild(tempSpan);
+        let textWidth = tempSpan.offsetWidth;
+        let textHeight = tempSpan.offsetHeight;
+        document.body.removeChild(tempSpan);
+        
+        if (displayName.includes('<br>')) {
+            textHeight = textHeight * 1.8;
+            textWidth = Math.min(textWidth, 120);
+        }
+        
+        const label = L.divIcon({
+            html: labelHtml,
+            className: 'city-label-icon',
+            iconSize: [textWidth + 10, textHeight + 8],
+            iconAnchor: [(textWidth + 10) / 2, (textHeight + 8) / 2]
+        });
+        
+        L.marker(center, { icon: label, zIndexOffset: 300 }).addTo(cityLabelsLayer);
     });
     
-    // 将地名标注图层添加到地图
     cityLabelsLayer.addTo(leafletMap);
-    
-    // 确保地名标注图层在最顶层
-    // layerGroup没有bringToFront方法，通过重新添加到地图来确保在顶层
     leafletMap.addLayer(cityLabelsLayer);
 }
 
-// 实现地名标注的缩放适配
 function updateCityLabelsSize() {
-    const zoom = leafletMap.getZoom();
-    
-    // 重新创建地名标注，实现自动隐藏机制
     createCityLabels();
-    
-    // 调整字体大小
-    const labels = document.querySelectorAll('.city-label');
-    labels.forEach(label => {
-        // 根据缩放级别调整字体大小
-        const fontSize = Math.max(12, Math.min(20, 12 + (zoom - 6) * 2));
-        label.style.fontSize = `${fontSize}px`;
-    });
 }
 
 function loadGeo() {
@@ -471,9 +828,7 @@ function loadGeo() {
                         mouseover: function(e) {
                             const w = getSafeWeatherData(feature.properties.name);
                             layer.setStyle(getFeatureStyle(w ? w.temp : 20, true));
-                            
                             if (w) {
-                                // 恢复美观的弹窗 UI
                                 L.popup({ className: 'city-popup' })
                                     .setLatLng(e.latlng)
                                     .setContent(`
@@ -481,7 +836,7 @@ function loadGeo() {
                                             <h4 style="color: #1e40af; margin-bottom: 5px;">${w.standardName}</h4>
                                             <div style="font-size: 20px; font-weight: bold;">${w.temp}°C</div>
                                             <div style="color: #6b7280; font-size:12px;">${w.text}</div>
-                                            <div style="color: #3b82f6; font-size:12px; margin-top:5px; font-weight:bold;">点击获取 AI 穿搭与景点 👉</div>
+                                            <div style="color: #3b82f6; font-size:12px; margin-top:5px; font-weight:bold;">点击获取 AI 穿搭 👉</div>
                                         </div>
                                     `).openOn(leafletMap);
                             }
@@ -499,18 +854,19 @@ function loadGeo() {
                 }
             }).addTo(leafletMap);
             
-            // 将GeoJSON图层移到所有图层的后面，确保底图上的地名显示在温度图层上方
             geoJsonLayer.eachLayer(layer => {
-                layer.bringToBack();
+                const name = layer.feature.properties.name;
+                const center = layer.getBounds().getCenter();
+                cityCenters[name] = [center.lat, center.lng];
             });
             
-            // 创建自定义地名标注图层
+            geoJsonLayer.eachLayer(layer => layer.bringToBack());
             createCityLabels();
         }).catch(err => console.error("GeoJSON加载失败:", err));
 }
 
 // ==========================================
-// 6. 路线规划与分析 (完整恢复红线绘制)
+// 6. 路线规划与分析
 // ==========================================
 document.getElementById('routeBtn').onclick = () => {
     document.getElementById('routePanel').classList.toggle('show');
@@ -528,55 +884,35 @@ document.getElementById('recommendBtn').onclick = () => {
     document.getElementById('searchRoute').click(); 
 };
 
-// 路径天气图层
 let weatherPathLayers = [];
-
-// 行政级别状态
-let currentAdminLevel = 'city'; // 默认市级
-
-// 路径天气开关状态
+let currentAdminLevel = 'city';
 let weatherPathEnabled = true;
+let routeWeatherData = [];
 
-// 从localStorage加载状态
 function loadRouteStates() {
     const savedLevel = localStorage.getItem('adminLevel');
     const savedWeatherPath = localStorage.getItem('weatherPathEnabled');
-    
-    if (savedLevel) {
-        currentAdminLevel = savedLevel;
-    }
-    
+    if (savedLevel) currentAdminLevel = savedLevel;
     if (savedWeatherPath !== null) {
         weatherPathEnabled = savedWeatherPath === 'true';
         document.getElementById('weatherPathToggle').checked = weatherPathEnabled;
     }
 }
 
-// 保存状态到localStorage
 function saveRouteStates() {
     localStorage.setItem('adminLevel', currentAdminLevel);
     localStorage.setItem('weatherPathEnabled', weatherPathEnabled.toString());
 }
 
-// 清除所有路径天气图层
 function clearWeatherPathLayers() {
-    weatherPathLayers.forEach(layer => {
-        if (leafletMap.hasLayer(layer)) {
-            leafletMap.removeLayer(layer);
-        }
-    });
+    weatherPathLayers.forEach(layer => { if (leafletMap.hasLayer(layer)) leafletMap.removeLayer(layer); });
     weatherPathLayers = [];
 }
 
-// 路径天气开关点击事件
 document.getElementById('weatherPathToggle').addEventListener('change', function() {
     weatherPathEnabled = this.checked;
     saveRouteStates();
-    
-    // 如果关闭路径天气，移除所有路径天气图层
-    if (!weatherPathEnabled) {
-        clearWeatherPathLayers();
-    }
+    if (!weatherPathEnabled) clearWeatherPathLayers();
 });
 
 async function getCoordinatesInfo(address) {
@@ -586,13 +922,12 @@ async function getCoordinatesInfo(address) {
         return { 
             location: data.geocodes[0].location, 
             adcode: data.geocodes[0].adcode,
-            level: data.geocodes[0].level // 行政级别
+            level: data.geocodes[0].level
         };
     }
     return null;
 }
 
-// 获取天气图标
 function getWeatherIcon(weather) {
     if (weather.includes('晴')) return '☀️';
     if (weather.includes('雨')) return '🌧️';
@@ -603,54 +938,82 @@ function getWeatherIcon(weather) {
     return '🌤️';
 }
 
-// 获取途经区域的天气数据
 async function getWeatherAlongRoute(steps) {
     const weatherData = [];
     const processedDistricts = new Set();
-    
-    // 限制最大标签数量
     const maxLabels = 8;
     let labelCount = 0;
     
     for (const step of steps) {
-        // 限制标签数量
         if (labelCount >= maxLabels) break;
-        
-        // 提取路段的中心点
         const polyline = step.polyline.split(';');
         const centerIndex = Math.floor(polyline.length / 2);
         const centerPoint = polyline[centerIndex];
         const [lng, lat] = centerPoint.split(',');
-        
-        // 反向地理编码获取行政区域
         try {
             const geoRes = await fetch(`https://restapi.amap.com/v3/geocode/regeo?location=${lng},${lat}&key=${config.amapApiKey}`);
             const geoData = await geoRes.json();
-            
             if (geoData.status === '1' && geoData.regeocode.addressComponent) {
                 const addressComponent = geoData.regeocode.addressComponent;
                 const adcode = addressComponent.adcode;
                 const district = addressComponent.district || addressComponent.city || addressComponent.province;
-                
-                // 避免重复区域
                 if (processedDistricts.has(district)) continue;
                 processedDistricts.add(district);
                 
-                // 获取该区域的天气
-                const weatherRes = await fetch(`https://restapi.amap.com/v3/weather/weatherInfo?key=${config.amapApiKey}&city=${adcode}&extensions=base`);
+                // 使用 extensions=all 获取预报数据
+                const weatherRes = await fetch(`https://restapi.amap.com/v3/weather/weatherInfo?key=${config.amapApiKey}&city=${adcode}&extensions=all`);
                 const weatherInfo = await weatherRes.json();
                 
-                if (weatherInfo.status === '1' && weatherInfo.lives.length > 0) {
-                    const weather = weatherInfo.lives[0];
+                if (weatherInfo.status === '1') {
+                    let temperature = '';
+                    let weather = '';
+                    let humidity = '';
+                    let windDirection = '';
+                    let windPower = '';
+                    
+                    // 如果有预报数据，计算未来3天的平均温度（白天温度）
+                    if (weatherInfo.forecasts && weatherInfo.forecasts.length > 0) {
+                        const forecasts = weatherInfo.forecasts[0];
+                        if (forecasts.casts && forecasts.casts.length > 0) {
+                            const futureCasts = forecasts.casts.slice(1, 4);
+                            if (futureCasts.length > 0) {
+                                const sumDayTemp = futureCasts.reduce((sum, cast) => sum + parseInt(cast.daytemp), 0);
+                                temperature = (sumDayTemp / futureCasts.length).toFixed(1);
+                                const weatherCount = {};
+                                futureCasts.forEach(cast => {
+                                    const w = cast.dayweather;
+                                    weatherCount[w] = (weatherCount[w] || 0) + 1;
+                                });
+                                let maxCount = 0;
+                                for (let [w, count] of Object.entries(weatherCount)) {
+                                    if (count > maxCount) {
+                                        maxCount = count;
+                                        weather = w;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 如果没有预报数据，使用实时天气作为备选
+                    if (!temperature && weatherInfo.lives && weatherInfo.lives.length > 0) {
+                        const liveWeather = weatherInfo.lives[0];
+                        temperature = liveWeather.temperature;
+                        weather = liveWeather.weather;
+                        humidity = liveWeather.humidity;
+                        windDirection = liveWeather.winddirection;
+                        windPower = liveWeather.windpower;
+                    }
+                    
                     weatherData.push({
                         location: [parseFloat(lat), parseFloat(lng)],
                         district: district,
                         adcode: adcode,
-                        weather: weather.weather,
-                        temperature: weather.temperature,
-                        humidity: weather.humidity,
-                        windDirection: weather.winddirection,
-                        windPower: weather.windpower
+                        weather: weather || '晴',
+                        temperature: temperature || '20',
+                        humidity: humidity || 'N/A',
+                        windDirection: windDirection || 'N/A',
+                        windPower: windPower || 'N/A'
                     });
                     labelCount++;
                 }
@@ -658,27 +1021,76 @@ async function getWeatherAlongRoute(steps) {
         } catch (err) {
             console.error('获取途经区域天气失败:', err);
         }
-        
-        // 避免请求过快被限制
         await sleep(100);
     }
-    
     return weatherData;
 }
 
-// 显示路径天气
-function showWeatherAlongRoute(weatherData) {
-    // 移除现有的路径天气图层
-    clearWeatherPathLayers();
+function createWeatherChart(weatherData) {
+    if (!weatherData || weatherData.length === 0) return '';
     
+    const temps = weatherData.map(w => parseInt(w.temperature));
+    const minTemp = Math.min(...temps) - 2;
+    const maxTemp = Math.max(...temps) + 2;
+    const range = maxTemp - minTemp || 1;
+    
+    const width = 280;
+    const height = 80;
+    const padding = 30;
+    const chartWidth = width - padding * 2;
+    const chartHeight = height - padding * 2;
+    
+    const points = weatherData.map((w, i) => {
+        const x = padding + (i / (weatherData.length - 1 || 1)) * chartWidth;
+        const y = padding + chartHeight - ((parseInt(w.temperature) - minTemp) / range) * chartHeight;
+        return `${x},${y}`;
+    });
+    
+    const linePath = `M${points.join(' L')}`;
+    const areaPath = `${linePath} L${width - padding},${height - padding} L${padding},${height - padding} Z`;
+    
+    const labels = weatherData.map((w, i) => {
+        const x = padding + (i / (weatherData.length - 1 || 1)) * chartWidth;
+        return `<text x="${x}" y="${height - 5}" text-anchor="middle" font-size="9" fill="#6b7280">${w.district.slice(0, 4)}</text>`;
+    }).join('');
+    
+    return `
+        <div style="margin-top: 10px; background: #f8fafc; border-radius: 8px; padding: 10px;">
+            <div style="font-size: 12px; font-weight: bold; color: #1e40af; margin-bottom: 8px;">🌡️ 路线温度变化</div>
+            <svg width="${width}" height="${height}" style="display: block;">
+                <defs>
+                    <linearGradient id="tempGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
+                        <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0.05"/>
+                    </linearGradient>
+                </defs>
+                <path d="${areaPath}" fill="url(#tempGradient)"/>
+                <path d="${linePath}" fill="none" stroke="#ef4444" stroke-width="2"/>
+                ${weatherData.map((w, i) => {
+                    const x = padding + (i / (weatherData.length - 1 || 1)) * chartWidth;
+                    const y = padding + chartHeight - ((parseInt(w.temperature) - minTemp) / range) * chartHeight;
+                    return `<circle cx="${x}" cy="${y}" r="4" fill="#ef4444" stroke="white" stroke-width="1.5"/>`;
+                }).join('')}
+                ${labels}
+            </svg>
+            <div style="display: flex; justify-content: space-between; font-size: 10px; color: #6b7280; margin-top: 5px;">
+                <span>最高: ${maxTemp}℃</span>
+                <span>最低: ${minTemp}℃</span>
+            </div>
+        </div>
+    `;
+}
+
+function showWeatherAlongRoute(weatherData) {
+    clearWeatherPathLayers();
     if (!weatherPathEnabled) return;
     
-    // 延迟显示，实现懒加载
+    // 保存天气数据到全局变量
+    routeWeatherData = weatherData;
+    
     setTimeout(() => {
         weatherData.forEach((item, index) => {
             const icon = getWeatherIcon(item.weather);
-            
-            // 创建天气标记
             const weatherMarker = L.divIcon({
                 html: `<div class="weather-path-marker" style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); padding: 5px 10px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 5px; transition: all 0.3s ease; z-index: 150;">
                         <span>${icon}</span>
@@ -689,16 +1101,7 @@ function showWeatherAlongRoute(weatherData) {
                 iconAnchor: [40, 15],
                 popupAnchor: [0, -15]
             });
-            
-            // 计算标签位置，避免堆叠
-            const offsetX = (index % 2 === 0) ? 30 : -30;
-            const offsetY = (index % 3 === 0) ? 20 : (index % 3 === 1) ? -20 : 0;
-            
-            // 创建带偏移的标记
-            const marker = L.marker(item.location, { 
-                icon: weatherMarker,
-                zIndexOffset: 220 // 设置z-index为220，在导航路线上方，自定义地名下方
-            })
+            const marker = L.marker(item.location, { icon: weatherMarker, zIndexOffset: 220 })
             .bindPopup(`
                 <div style="padding: 10px;">
                     <div style="font-weight: bold; margin-bottom: 5px;">${item.district}</div>
@@ -712,38 +1115,60 @@ function showWeatherAlongRoute(weatherData) {
                 </div>
             `)
             .addTo(leafletMap);
-            
-            // 添加悬停效果
             marker.on('mouseover', function() {
-                const icon = this._icon;
-                if (icon) {
-                    icon.style.transform = 'scale(1.1)';
-                    icon.style.zIndex = 180; // 悬停时提高z-index
-                }
+                const iconEl = this._icon;
+                if (iconEl) { iconEl.style.transform = 'scale(1.1)'; iconEl.style.zIndex = 180; }
             });
-            
             marker.on('mouseout', function() {
-                const icon = this._icon;
-                if (icon) {
-                    icon.style.transform = 'scale(1)';
-                    icon.style.zIndex = 150;
-                }
+                const iconEl = this._icon;
+                if (iconEl) { iconEl.style.transform = 'scale(1)'; iconEl.style.zIndex = 150; }
             });
-            
-            // 添加点击隐藏功能
             marker.on('click', function(e) {
-                e.originalEvent.stopPropagation(); // 阻止冒泡，避免触发地图点击
+                e.originalEvent.stopPropagation();
                 leafletMap.removeLayer(this);
-                // 从数组中移除
-                const index = weatherPathLayers.indexOf(this);
-                if (index > -1) {
-                    weatherPathLayers.splice(index, 1);
-                }
+                const idx = weatherPathLayers.indexOf(this);
+                if (idx > -1) weatherPathLayers.splice(idx, 1);
             });
-            
             weatherPathLayers.push(marker);
         });
-    }, 500); // 500ms延迟，确保路线完全渲染
+    }, 500);
+}
+
+function createTeardropIconWithLabel(color, labelText) {
+    return L.divIcon({
+        html: `
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="
+                    width: 0;
+                    height: 0;
+                    border-left: 12px solid transparent;
+                    border-right: 12px solid transparent;
+                    border-bottom: 20px solid ${color};
+                    border-radius: 50%;
+                    transform: rotate(180deg);
+                    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+                    margin-bottom: 2px;
+                "></div>
+                <div style="
+                    background: rgba(0,0,0,0.7);
+                    color: white;
+                    padding: 3px 8px;
+                    border-radius: 12px;
+                    font-size: 13px;
+                    font-weight: bold;
+                    white-space: nowrap;
+                    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+                    border: 1px solid rgba(255,255,255,0.3);
+                    backdrop-filter: blur(4px);
+                    margin-top: -8px;
+                ">${labelText}</div>
+            </div>
+        `,
+        className: 'teardrop-marker-label',
+        iconSize: [24, 50],
+        iconAnchor: [12, 48],
+        popupAnchor: [0, -48]
+    });
 }
 
 document.getElementById('searchRoute').onclick = async () => {
@@ -753,10 +1178,11 @@ document.getElementById('searchRoute').onclick = async () => {
     
     if(!origin || !dest) return alert("请输入起终点");
     
-    // 清除旧的路线和天气标签
     routeLayers.forEach(layer => leafletMap.removeLayer(layer));
     routeLayers = [];
     clearWeatherPathLayers();
+    if (tempStartMarker) leafletMap.removeLayer(tempStartMarker);
+    if (tempEndMarker) leafletMap.removeLayer(tempEndMarker);
     
     optionsPanel.innerHTML = '<p style="text-align:center; padding:10px; color:#6b7280;">🔍 正在智能规划与拉取天气...</p>';
     
@@ -766,6 +1192,19 @@ document.getElementById('searchRoute').onclick = async () => {
         optionsPanel.innerHTML = '<p style="color:#ef4444;">解析失败，请输入更具体的地址(如:大理古城)</p>';
         return;
     }
+    
+    const [originLng, originLat] = originInfo.location.split(',').map(Number);
+    const [destLng, destLat] = destInfo.location.split(',').map(Number);
+    
+    const startIcon = createTeardropIconWithLabel('#10b981', origin);
+    const endIcon = createTeardropIconWithLabel('#ef4444', dest);
+    
+    tempStartMarker = L.marker([originLat, originLng], { icon: startIcon, zIndexOffset: 500 })
+        .bindPopup(`<b>起点</b><br>${origin}`).addTo(leafletMap);
+    tempEndMarker = L.marker([destLat, destLng], { icon: endIcon, zIndexOffset: 500 })
+        .bindPopup(`<b>终点</b><br>${dest}`).addTo(leafletMap);
+    
+    routeLayers.push(tempStartMarker, tempEndMarker);
 
     try {
         const res = await fetch(`https://restapi.amap.com/v3/direction/driving?origin=${originInfo.location}&destination=${destInfo.location}&key=${config.amapApiKey}`);
@@ -774,12 +1213,10 @@ document.getElementById('searchRoute').onclick = async () => {
         if(data.status === '1' && data.route.paths.length > 0) {
             const path = data.route.paths[0];
             const distance = (path.distance / 1000).toFixed(1);
-            
             const durationMins = Math.floor(path.duration / 60);
             const hours = Math.floor(durationMins / 60);
             const mins = durationMins % 60;
             const timeStr = hours > 0 ? `${hours}小时${mins}分钟` : `${mins}分钟`;
-            
             const arrivalTime = new Date(new Date().getTime() + path.duration * 1000);
             const arrivalStr = `${arrivalTime.getHours().toString().padStart(2,'0')}:${arrivalTime.getMinutes().toString().padStart(2,'0')}`;
             
@@ -795,10 +1232,10 @@ document.getElementById('searchRoute').onclick = async () => {
             });
 
             const weatherRes = await fetch(`https://restapi.amap.com/v3/weather/weatherInfo?key=${config.amapApiKey}&city=${destInfo.adcode}&extensions=all`);
-            const weatherData = await weatherRes.json();
+            const weatherDataDest = await weatherRes.json();
             let destWeatherHtml = "目的地天气暂无数据";
-            if(weatherData.status === '1' && weatherData.forecasts.length > 0) {
-                const destWeather = weatherData.forecasts[0].casts[0];
+            if(weatherDataDest.status === '1' && weatherDataDest.forecasts.length > 0) {
+                const destWeather = weatherDataDest.forecasts[0].casts[0];
                 destWeatherHtml = `目的地今日预计：<span style="color:#f97316; font-weight:bold;">${destWeather.dayweather} (${destWeather.nighttemp}~${destWeather.daytemp}℃)</span>`;
             }
 
@@ -818,24 +1255,26 @@ document.getElementById('searchRoute').onclick = async () => {
                 </div>
             `;
             
-            // 恢复核心逻辑：在 Leaflet 画出炫酷的红线和起点终点标记！
-            routeLayers.forEach(layer => leafletMap.removeLayer(layer));
-            routeLayers = [];
+            if (tempStartMarker) leafletMap.removeLayer(tempStartMarker);
+            if (tempEndMarker) leafletMap.removeLayer(tempEndMarker);
+            routeLayers = routeLayers.filter(l => l !== tempStartMarker && l !== tempEndMarker);
             
             const polylineLayer = L.polyline(latlngs, {color: '#ef4444', weight: 5, opacity: 0.8, zIndexOffset: 200}).addTo(leafletMap);
-            const startMarker = L.circleMarker(latlngs[0], {color: 'white', weight: 2, fillColor: '#059669', radius: 6, fillOpacity: 1}).bindPopup("起点: " + origin).addTo(leafletMap);
-            const endMarker = L.circleMarker(latlngs[latlngs.length - 1], {color: 'white', weight: 2, fillColor: '#ef4444', radius: 6, fillOpacity: 1}).bindPopup("终点: " + dest).addTo(leafletMap);
+            
+            const formalStartIcon = createTeardropIconWithLabel('#059669', origin);
+            const formalEndIcon = createTeardropIconWithLabel('#dc2626', dest);
+            
+            const startMarker = L.marker(latlngs[0], { icon: formalStartIcon, zIndexOffset: 400 }).bindPopup("起点: " + origin).addTo(leafletMap);
+            const endMarker = L.marker(latlngs[latlngs.length - 1], { icon: formalEndIcon, zIndexOffset: 400 }).bindPopup("终点: " + dest).addTo(leafletMap);
             
             routeLayers.push(polylineLayer, startMarker, endMarker);
             leafletMap.fitBounds(polylineLayer.getBounds(), {padding: [50, 50]});
             
-            // 获取并显示路径天气
             if (weatherPathEnabled) {
                 const weatherAlongRoute = await getWeatherAlongRoute(path.steps);
                 showWeatherAlongRoute(weatherAlongRoute);
             }
             
-            // 自动识别行政级别
             if (originInfo.level === 'district' || destInfo.level === 'district') {
                 currentAdminLevel = 'district';
             } else {
@@ -857,27 +1296,17 @@ document.getElementById('searchRoute').onclick = async () => {
 window.onload = async () => {
     updateDate();
     loadGeo(); 
-    
-    // 加载导航状态
     loadRouteStates();
-    
-    // 加载地名显示开关状态
     loadCityLabelsState();
-    
     await fetchAllWeather();
-    
-    // 渲染地图颜色
     if (geoJsonLayer) {
         geoJsonLayer.eachLayer(layer => {
             const w = getSafeWeatherData(layer.feature.properties.name);
             layer.setStyle(getFeatureStyle(w ? w.temp : 20, false));
         });
     }
-    
     document.getElementById('dataStatus').textContent = "数据已同步";
     document.getElementById('dataStatus').style.color = "#a7f3d0"; 
-    
-    // 初始化主题和壁纸
     initTheme();
     initWallpaper();
 };
@@ -885,51 +1314,35 @@ window.onload = async () => {
 // ==========================================
 // 8. 主题切换功能
 // ==========================================
+let panelOpacity = 0.8;
 
-// 面板透明度设置
-let panelOpacity = 0.8; // 默认80%透明度
-
-// 从localStorage加载透明度设置
 function loadPanelOpacity() {
     const savedOpacity = localStorage.getItem('panelOpacity');
     if (savedOpacity !== null) {
         panelOpacity = parseFloat(savedOpacity);
     } else {
-        // 默认值
         panelOpacity = 0.8;
         savePanelOpacity(panelOpacity);
     }
-    
-    // 更新滑块值
     const opacitySlider = document.getElementById('opacitySlider');
     const opacityValue = document.getElementById('opacityValue');
     if (opacitySlider && opacityValue) {
         opacitySlider.value = Math.round(panelOpacity * 100);
         opacityValue.textContent = `${Math.round(panelOpacity * 100)}%`;
     }
-    
-    // 应用透明度
     setPanelOpacity(panelOpacity);
 }
 
-// 保存透明度设置到localStorage
 function savePanelOpacity(opacity) {
     localStorage.setItem('panelOpacity', opacity.toString());
 }
 
-// 设置面板透明度
 function setPanelOpacity(opacity) {
-    // 获取左右面板中的所有卡片
     const leftPanels = document.querySelectorAll('.left-panel .card');
     const rightPanels = document.querySelectorAll('.right-panel .card');
     const panels = [...leftPanels, ...rightPanels];
-    
     panels.forEach(panel => {
-        // 仅调整面板的背景透明度，不影响内部元素
-        // 直接设置背景色，使用默认的白色背景
         panel.style.backgroundColor = `rgba(255, 255, 255, ${opacity})`;
-        
-        // 对于不同主题，使用不同的背景色
         const body = document.body;
         if (body.classList.contains('theme-girl')) {
             panel.style.backgroundColor = `rgba(255, 182, 193, ${opacity})`;
@@ -940,47 +1353,32 @@ function setPanelOpacity(opacity) {
 }
 
 function initTheme() {
-    // 从localStorage加载主题
     const savedTheme = localStorage.getItem('theme') || 'normal';
     setTheme(savedTheme);
-    
-    // 主题按钮点击事件
     const themeBtn = document.getElementById('themeBtn');
     const themeMenu = document.getElementById('themeMenu');
-    
     themeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         themeMenu.style.display = themeMenu.style.display === 'block' ? 'none' : 'block';
     });
-    
-    // 点击其他地方关闭主题菜单
     document.addEventListener('click', () => {
         themeMenu.style.display = 'none';
     });
-    
-    // 主题选项点击事件
     const themeOptions = document.querySelectorAll('.theme-option[data-theme]');
     themeOptions.forEach(option => {
         option.addEventListener('click', (e) => {
             e.stopPropagation();
             const theme = option.getAttribute('data-theme');
             setTheme(theme);
-            // 应用透明度设置
             setPanelOpacity(panelOpacity);
             themeMenu.style.display = 'none';
         });
     });
-    
-    // 透明度滑块事件
     const opacitySlider = document.getElementById('opacitySlider');
     const opacityValue = document.getElementById('opacityValue');
-    
     if (opacitySlider && opacityValue) {
-        // 初始化滑块值
         opacitySlider.value = Math.round(panelOpacity * 100);
         opacityValue.textContent = `${Math.round(panelOpacity * 100)}%`;
-        
-        // 绑定input事件
         opacitySlider.addEventListener('input', (e) => {
             const value = parseInt(e.target.value);
             panelOpacity = value / 100;
@@ -988,8 +1386,6 @@ function initTheme() {
             setPanelOpacity(panelOpacity);
             savePanelOpacity(panelOpacity);
         });
-        
-        // 绑定change事件，确保值变化时也能触发
         opacitySlider.addEventListener('change', (e) => {
             const value = parseInt(e.target.value);
             panelOpacity = value / 100;
@@ -998,21 +1394,14 @@ function initTheme() {
             savePanelOpacity(panelOpacity);
         });
     }
-    
-    // 加载面板透明度设置
     loadPanelOpacity();
 }
 
 function setTheme(theme) {
-    // 移除所有主题类
     document.body.classList.remove('theme-girl', 'theme-hard');
-    
-    // 添加选中的主题类
     if (theme !== 'normal') {
         document.body.classList.add(`theme-${theme}`);
     }
-    
-    // 保存到localStorage
     localStorage.setItem('theme', theme);
 }
 
@@ -1020,26 +1409,19 @@ function setTheme(theme) {
 // 9. 自定义壁纸功能
 // ==========================================
 function initWallpaper() {
-    // 从localStorage加载壁纸
     const savedWallpaper = localStorage.getItem('wallpaper');
     const savedDynamicWallpaper = localStorage.getItem('dynamicWallpaper');
-    
     if (savedWallpaper) {
         createWallpaper(savedWallpaper);
     } else if (savedDynamicWallpaper) {
         createDynamicWallpaper(JSON.parse(savedDynamicWallpaper));
     }
-    
-    // 静态壁纸按钮点击事件
     const customWallpaperBtn = document.getElementById('customWallpaperBtn');
     const wallpaperInput = document.getElementById('wallpaperInput');
-    
     customWallpaperBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         wallpaperInput.click();
     });
-    
-    // 静态壁纸文件选择事件
     wallpaperInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -1048,25 +1430,18 @@ function initWallpaper() {
                 const imageData = event.target.result;
                 createWallpaper(imageData);
                 localStorage.setItem('wallpaper', imageData);
-                // 清除动态壁纸数据
                 localStorage.removeItem('dynamicWallpaper');
-                // 隐藏控制按钮
                 document.getElementById('wallpaperControls').style.display = 'none';
             };
             reader.readAsDataURL(file);
         }
     });
-    
-    // 动态壁纸按钮点击事件
     const dynamicWallpaperBtn = document.getElementById('dynamicWallpaperBtn');
     const dynamicWallpaperInput = document.getElementById('dynamicWallpaperInput');
-    
     dynamicWallpaperBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         dynamicWallpaperInput.click();
     });
-    
-    // 动态壁纸文件选择事件
     dynamicWallpaperInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -1074,26 +1449,20 @@ function initWallpaper() {
             reader.onload = (event) => {
                 const mediaData = event.target.result;
                 const isVideo = file.type.startsWith('video/');
-                
                 const dynamicWallpaperData = {
                     data: mediaData,
                     type: isVideo ? 'video' : 'gif',
                     isPlaying: true,
                     isMuted: true
                 };
-                
                 createDynamicWallpaper(dynamicWallpaperData);
                 localStorage.setItem('dynamicWallpaper', JSON.stringify(dynamicWallpaperData));
-                // 清除静态壁纸数据
                 localStorage.removeItem('wallpaper');
-                // 显示控制按钮
                 document.getElementById('wallpaperControls').style.display = 'flex';
             };
             reader.readAsDataURL(file);
         }
     });
-    
-    // 播放/暂停按钮点击事件
     const playPauseBtn = document.getElementById('playPauseBtn');
     playPauseBtn.addEventListener('click', () => {
         const dynamicWallpaper = document.querySelector('.dynamic-wallpaper-container video') || document.querySelector('.dynamic-wallpaper-container img');
@@ -1101,30 +1470,23 @@ function initWallpaper() {
             if (dynamicWallpaper.paused || dynamicWallpaper.ended) {
                 dynamicWallpaper.play();
                 playPauseBtn.textContent = '⏸️';
-                // 更新localStorage
                 updateDynamicWallpaperState(true);
             } else {
                 dynamicWallpaper.pause();
                 playPauseBtn.textContent = '▶️';
-                // 更新localStorage
                 updateDynamicWallpaperState(false);
             }
         }
     });
-    
-    // 静音按钮点击事件
     const muteBtn = document.getElementById('muteBtn');
     muteBtn.addEventListener('click', () => {
         const video = document.querySelector('.dynamic-wallpaper-container video');
         if (video) {
             video.muted = !video.muted;
             muteBtn.textContent = video.muted ? '🔇' : '🔊';
-            // 更新localStorage
             updateDynamicWallpaperMute(video.muted);
         }
     });
-    
-    // 重置壁纸按钮点击事件
     const resetWallpaperBtn = document.getElementById('resetWallpaperBtn');
     resetWallpaperBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1135,31 +1497,19 @@ function initWallpaper() {
     });
 }
 
-// 创建静态壁纸
 function createWallpaper(imageData) {
-    // 移除现有的壁纸
     removeWallpaper();
-    
-    // 创建壁纸容器
     const wallpaperContainer = document.createElement('div');
     wallpaperContainer.className = 'wallpaper-container';
     wallpaperContainer.style.backgroundImage = `url(${imageData})`;
-    
-    // 添加到页面
     document.body.insertBefore(wallpaperContainer, document.body.firstChild);
 }
 
-// 创建动态壁纸
 function createDynamicWallpaper(data) {
-    // 移除现有的壁纸
     removeWallpaper();
-    
-    // 创建动态壁纸容器
     const dynamicWallpaperContainer = document.createElement('div');
     dynamicWallpaperContainer.className = 'dynamic-wallpaper-container';
-    
     if (data.type === 'video') {
-        // 创建视频元素
         const video = document.createElement('video');
         video.src = data.data;
         video.loop = true;
@@ -1167,42 +1517,26 @@ function createDynamicWallpaper(data) {
         video.muted = data.isMuted;
         video.playsInline = true;
         dynamicWallpaperContainer.appendChild(video);
-        
-        // 更新控制按钮状态
         document.getElementById('playPauseBtn').textContent = data.isPlaying ? '⏸️' : '▶️';
         document.getElementById('muteBtn').textContent = data.isMuted ? '🔇' : '🔊';
     } else {
-        // 创建GIF元素
         const img = document.createElement('img');
         img.src = data.data;
         dynamicWallpaperContainer.appendChild(img);
-        
-        // 更新控制按钮状态
         document.getElementById('playPauseBtn').textContent = '⏸️';
         document.getElementById('muteBtn').textContent = '🔇';
     }
-    
-    // 添加到页面
     document.body.insertBefore(dynamicWallpaperContainer, document.body.firstChild);
-    
-    // 显示控制按钮
     document.getElementById('wallpaperControls').style.display = 'flex';
 }
 
-// 移除所有壁纸
 function removeWallpaper() {
     const existingWallpaper = document.querySelector('.wallpaper-container');
-    if (existingWallpaper) {
-        existingWallpaper.remove();
-    }
-    
+    if (existingWallpaper) existingWallpaper.remove();
     const existingDynamicWallpaper = document.querySelector('.dynamic-wallpaper-container');
-    if (existingDynamicWallpaper) {
-        existingDynamicWallpaper.remove();
-    }
+    if (existingDynamicWallpaper) existingDynamicWallpaper.remove();
 }
 
-// 更新动态壁纸播放状态
 function updateDynamicWallpaperState(isPlaying) {
     const savedDynamicWallpaper = localStorage.getItem('dynamicWallpaper');
     if (savedDynamicWallpaper) {
@@ -1212,7 +1546,6 @@ function updateDynamicWallpaperState(isPlaying) {
     }
 }
 
-// 更新动态壁纸静音状态
 function updateDynamicWallpaperMute(isMuted) {
     const savedDynamicWallpaper = localStorage.getItem('dynamicWallpaper');
     if (savedDynamicWallpaper) {
@@ -1221,3 +1554,249 @@ function updateDynamicWallpaperMute(isMuted) {
         localStorage.setItem('dynamicWallpaper', JSON.stringify(dynamicWallpaperData));
     }
 }
+
+// ==========================================
+// POI搜索功能（美食、景点）
+// ==========================================
+
+// POI缓存和调用限制机制
+let poiCache = {};
+const POI_CACHE_DURATION = 30 * 60 * 1000; // 30分钟缓存
+let lastPOICallTime = 0;
+const POI_CALL_INTERVAL = 2000; // 2秒调用间隔
+let poiMarkers = [];
+
+// POI类型映射
+const poiTypeMap = {
+    food: { types: '餐饮服务', icon: '🍜', color: '#ef4444' },
+    spots: { types: '旅游景点', icon: '🏞️', color: '#22c55e' }
+};
+
+// 获取POI数据（带缓存和调用限制）
+async function searchPOI(keyword, type = 'food', radius = 3000) {
+    const now = Date.now();
+    
+    // 调用频率限制
+    if (now - lastPOICallTime < POI_CALL_INTERVAL) {
+        console.warn('POI搜索过于频繁，请稍后再试');
+        return { success: false, message: '搜索过于频繁，请稍后再试' };
+    }
+    
+    // 检查缓存
+    const cacheKey = `${keyword}_${type}_${radius}`;
+    if (poiCache[cacheKey] && (now - poiCache[cacheKey].timestamp) < POI_CACHE_DURATION) {
+        console.log('使用POI缓存数据');
+        return { success: true, data: poiCache[cacheKey].data };
+    }
+    
+    // 获取地点坐标
+    const coordInfo = await getCoordinatesInfo(keyword);
+    if (!coordInfo) {
+        return { success: false, message: '无法解析地点，请输入更具体的地址' };
+    }
+    
+    lastPOICallTime = now;
+    
+    try {
+        const typeConfig = poiTypeMap[type];
+        const url = `https://restapi.amap.com/v3/place/around?key=${config.amapApiKey}&location=${coordInfo.location}&keywords=&types=${encodeURIComponent(typeConfig.types)}&radius=${radius}&offset=20&page=1&extensions=all`;
+        
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if (data.status === '1' && data.pois && data.pois.length > 0) {
+            // 存入缓存
+            poiCache[cacheKey] = {
+                data: data.pois,
+                timestamp: Date.now()
+            };
+            return { success: true, data: data.pois };
+        } else {
+            return { success: false, message: '未找到相关商户信息' };
+        }
+    } catch (err) {
+        console.error('POI搜索失败:', err);
+        return { success: false, message: '搜索失败，请稍后重试' };
+    }
+}
+
+// 在地图上显示POI标记
+function showPOIMarkers(pois, type) {
+    // 清除之前的标记
+    clearPOIMarkers();
+    
+    const typeConfig = poiTypeMap[type];
+    
+    pois.forEach(poi => {
+        const [lng, lat] = poi.location.split(',').map(Number);
+        const icon = L.divIcon({
+            html: `
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="
+                        width: 32px;
+                        height: 32px;
+                        border-radius: 50%;
+                        background: ${typeConfig.color};
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 16px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                        border: 2px solid white;
+                    ">${typeConfig.icon}</div>
+                    <div style="
+                        background: rgba(0,0,0,0.8);
+                        color: white;
+                        padding: 2px 6px;
+                        border-radius: 8px;
+                        font-size: 10px;
+                        white-space: nowrap;
+                        margin-top: 2px;
+                        max-width: 80px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    ">${poi.name}</div>
+                </div>
+            `,
+            className: 'poi-marker',
+            iconSize: [40, 50],
+            iconAnchor: [20, 45],
+            popupAnchor: [0, -45]
+        });
+        
+        const marker = L.marker([lat, lng], { icon: icon, zIndexOffset: 300 })
+            .bindPopup(`
+                <div style="padding: 10px; min-width: 180px;">
+                    <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px;">${typeConfig.icon} ${poi.name}</div>
+                    <div style="font-size: 12px; color: #6b7280; margin-bottom: 3px;">📍 ${poi.address}</div>
+                    ${poi.tel ? `<div style="font-size: 12px; color: #6b7280; margin-bottom: 3px;">📞 ${poi.tel}</div>` : ''}
+                    ${poi.distance ? `<div style="font-size: 12px; color: #6b7280;">📏 距离: ${poi.distance}m</div>` : ''}
+                </div>
+            `)
+            .addTo(leafletMap);
+        
+        poiMarkers.push(marker);
+    });
+    
+    // 显示清除按钮
+    document.getElementById('clearPOIMarkers').style.display = 'block';
+    
+    // 调整地图视野
+    if (pois.length > 0) {
+        const bounds = L.latLngBounds(pois.map(p => {
+            const [lng, lat] = p.location.split(',').map(Number);
+            return [lat, lng];
+        }));
+        leafletMap.fitBounds(bounds, { padding: [50, 50] });
+    }
+}
+
+// 清除POI标记
+function clearPOIMarkers() {
+    poiMarkers.forEach(marker => {
+        leafletMap.removeLayer(marker);
+    });
+    poiMarkers = [];
+    document.getElementById('clearPOIMarkers').style.display = 'none';
+}
+
+// 渲染POI搜索结果
+function renderPOIResults(pois, type) {
+    const container = document.getElementById('poiResults');
+    const typeConfig = poiTypeMap[type];
+    
+    if (!pois || pois.length === 0) {
+        container.innerHTML = `<p style="font-size:13px; color:#6b7280; text-align:center; padding:20px;">未找到相关${type === 'food' ? '美食' : '景点'}</p>`;
+        return;
+    }
+    
+    container.innerHTML = `
+        <div style="max-height: 250px; overflow-y: auto;">
+            ${pois.slice(0, 10).map((poi, index) => `
+                <div class="poi-item" data-index="${index}">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 20px;">${typeConfig.icon}</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; font-size: 14px;">${poi.name}</div>
+                            <div style="font-size: 12px; color: #6b7280;">${poi.address}</div>
+                            ${poi.distance ? `<div style="font-size: 11px; color: #9ca3af;">距离: ${poi.distance}m</div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    
+    // 添加点击事件
+    container.querySelectorAll('.poi-item').forEach((item, index) => {
+        item.addEventListener('click', () => {
+            const poi = pois[index];
+            const [lng, lat] = poi.location.split(',').map(Number);
+            leafletMap.setView([lat, lng], 15);
+            
+            // 高亮对应标记
+            if (poiMarkers[index]) {
+                poiMarkers[index].openPopup();
+            }
+        });
+    });
+}
+
+// 初始化POI搜索功能
+function initPOISearch() {
+    // 类型切换
+    const poiTabBtns = document.querySelectorAll('.poi-tab-btn');
+    poiTabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            poiTabBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            if (currentSelectedCity) {
+                autoSearchNearby(currentSelectedCity);
+            }
+        });
+    });
+    
+    // 搜索按钮
+    document.getElementById('searchPOI').addEventListener('click', async () => {
+        const keyword = document.getElementById('poiSearchInput').value.trim();
+        const type = document.querySelector('.poi-tab-btn.active').dataset.type;
+        
+        if (!keyword) {
+            alert('请输入搜索地点');
+            return;
+        }
+        
+        currentSelectedCity = keyword;
+        
+        const resultsContainer = document.getElementById('poiResults');
+        resultsContainer.innerHTML = `<p style="text-align:center; padding:20px; color:#3b82f6;">🔍 正在搜索周边${type === 'food' ? '美食' : '景点'}...</p>`;
+        
+        const result = await searchPOI(keyword, type);
+        
+        if (result.success) {
+            renderPOIResults(result.data, type);
+            showPOIMarkers(result.data, type);
+        } else {
+            resultsContainer.innerHTML = `<p style="font-size:13px; color:#ef4444; text-align:center; padding:20px;">${result.message}</p>`;
+        }
+    });
+    
+    // 清除标记按钮
+    document.getElementById('clearPOIMarkers').addEventListener('click', () => {
+        clearPOIMarkers();
+        document.getElementById('poiResults').innerHTML = `<p style="font-size:13px; color:#6b7280; text-align:center; padding:20px;">输入地点并选择类型进行搜索</p>`;
+    });
+    
+    // 回车键搜索
+    document.getElementById('poiSearchInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            document.getElementById('searchPOI').click();
+        }
+    });
+}
+
+// 页面加载完成后初始化POI搜索
+document.addEventListener('DOMContentLoaded', () => {
+    initPOISearch();
+});

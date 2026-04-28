@@ -87,6 +87,49 @@ body.theme-hard .ai-tag { color: #4299E1; }
 body.theme-hard .spots-item { background: #1A202C; border-left: 3px solid #4299E1; }
 body.theme-hard .arrival-info { background: #2D3748; border-left: 4px solid #ED8936; }
 
+/* 标签页样式 */
+.tab-header {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    margin: -15px -15px 15px -15px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    color: #6b7280;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.tab-btn.active {
+    color: #3b82f6;
+    border-bottom-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.tab-content {
+    min-height: 200px;
+}
+
+.tab-panel-content {
+    display: none;
+}
+
+.tab-panel-content.active {
+    display: block;
+}
+
 /* 响应式设计 */
 @media (max-width: 1200px) {
     .main-content { flex-direction: column; height: auto; }
@@ -210,4 +253,258 @@ input:checked + .slider:before {
     font-size: 12px;
     color: #6b7280;
     text-align: right;
+}
+/* 美食推荐样式 */
+.food-header {
+    font-weight: bold;
+    color: #1e40af;
+    margin-bottom: 12px;
+    border-left: 4px solid #f59e0b;
+    padding-left: 12px;
+}
+.food-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.food-item {
+    background: #fef3c7;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #374151;
+    border-left: 3px solid #f59e0b;
+    display: flex;
+    flex-direction: column;
+}
+.food-name {
+    font-weight: bold;
+    color: #92400e;
+    margin-bottom: 4px;
+}
+.food-desc {
+    color: #6b7280;
+    font-size: 12px;
+}
+/* 硬汉主题适配 */
+body.theme-hard .food-item {
+    background: #2d3748;
+    border-left-color: #f59e0b;
+    color: #e2e8f0;
+}
+body.theme-hard .food-name {
+    color: #fbbf24;
+}
+body.theme-hard .food-desc {
+    color: #cbd5e1;
+}
+/* 少女主题适配 */
+body.theme-girl .food-item {
+    background: #ffe4e6;
+    border-left-color: #f472b6;
+}
+body.theme-girl .food-name {
+    color: #be185d;
+}
+
+/* 未来天气均值提示 Toast */ 
+.avg-toast { 
+    position: fixed; 
+    bottom: 80px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    background: rgba(0, 0, 0, 0.85); 
+    backdrop-filter: blur(8px); 
+    color: white; 
+    padding: 12px 20px; 
+    border-radius: 12px; 
+    font-size: 14px; 
+    z-index: 2000; 
+    max-width: 80%; 
+    text-align: center; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+    animation: fadeInUp 0.3s ease; 
+}
+
+.avg-toast-content { 
+    line-height: 1.5; 
+}
+
+@keyframes fadeInUp { 
+    from { 
+        opacity: 0; 
+        transform: translateX(-50%) translateY(20px); 
+    } 
+    to { 
+        opacity: 1; 
+        transform: translateX(-50%) translateY(0); 
+    } 
+}
+
+/* 禁用按钮样式 */ 
+.btn:disabled { 
+    opacity: 0.6; 
+    cursor: not-allowed; 
+}
+
+/* POI搜索面板样式 */
+.poi-panel {
+    margin-top: 15px;
+}
+
+.poi-search-box {
+    margin-bottom: 15px;
+}
+
+.poi-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-bottom: 10px;
+}
+
+.poi-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.poi-type-tabs {
+    display: flex;
+    gap: 8px;
+}
+
+.poi-tab-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.poi-tab-btn:hover {
+    background: #e5e7eb;
+}
+
+.poi-tab-btn.active {
+    background: #3b82f6;
+    color: white;
+}
+
+.poi-results {
+    margin-bottom: 15px;
+}
+
+.poi-item {
+    padding: 10px;
+    border-radius: 8px;
+    background: #f9fafb;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.poi-item:hover {
+    background: #eff6ff;
+}
+
+.poi-item:last-child {
+    margin-bottom: 0;
+}
+
+/* 硬汉主题 POI 样式适配 */
+body.theme-hard .poi-input {
+    background: #1f2937;
+    border-color: #374151;
+    color: #e5e7eb;
+}
+
+body.theme-hard .poi-tab-btn {
+    background: #374151;
+    color: #e5e7eb;
+}
+
+body.theme-hard .poi-tab-btn:hover {
+    background: #4b5563;
+}
+
+body.theme-hard .poi-tab-btn.active {
+    background: #3b82f6;
+}
+
+body.theme-hard .poi-item {
+    background: #374151;
+}
+
+body.theme-hard .poi-item:hover {
+    background: #4b5563;
+}
+
+/* 少女主题 POI 样式适配 */
+body.theme-girl .poi-tab-btn.active {
+    background: #f472b6;
+}
+
+body.theme-girl .poi-item:hover {
+    background: #fce7f3;
+}
+
+/* POI标记样式 */
+.poi-marker {
+    transition: transform 0.2s;
+}
+
+.poi-marker:hover {
+    transform: scale(1.1);
+}
+
+/* 使用提示卡片样式 */
+.tips-card {
+    margin-top: 15px;
+}
+
+.tip-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    font-size: 13px;
+    color: #4b5563;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.tip-item:last-child {
+    border-bottom: none;
+}
+
+.tip-item span:first-child {
+    font-size: 16px;
+}
+
+/* 硬汉主题提示样式 */
+body.theme-hard .tips-card {
+    background: #1f2937;
+}
+
+body.theme-hard .tip-item {
+    color: #d1d5db;
+    border-bottom-color: #374151;
+}
+
+/* 少女主题提示样式 */
+body.theme-girl .tips-card {
+    background: #fdf2f8;
+}
+
+body.theme-girl .tip-item {
+    color: #831843;
+    border-bottom-color: #fce7f3;
 }
